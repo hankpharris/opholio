@@ -12,37 +12,40 @@ declare module "next-auth" {
 }
 
 // Helper function to ensure proper URL construction
-const getCallbackUrl = (baseUrl: string, provider: string) => {
+const getCallbackUrl = (baseUrl: string | undefined, provider: string) => {
+    if (!baseUrl) return undefined;
     // Remove trailing slash from base URL if it exists
     const cleanBaseUrl = baseUrl.replace(/\/$/, '');
     return `${cleanBaseUrl}/api/auth/callback/${provider}`;
 };
 
-// Log the callback URLs for debugging
-console.log('Vercel callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL!, 'github-vercel'));
-console.log('Personal callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL!, 'github-personal'));
+// Log the callback URLs for debugging (only at runtime, not during build)
+if (typeof window === 'undefined' && process.env.NEXTAUTH_URL) {
+    console.log('Vercel callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL, 'github-vercel'));
+    console.log('Personal callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL, 'github-personal'));
+}
 
 export const authOptions: NextAuthOptions = {
     providers: [
         // Vercel domain provider
         GithubProvider({
             id: 'github-vercel',
-            clientId: process.env.GITHUB_ID!,
-            clientSecret: process.env.GITHUB_SECRET!,
+            clientId: process.env.GITHUB_ID || '',
+            clientSecret: process.env.GITHUB_SECRET || '',
             authorization: {
                 params: {
-                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL!, 'github-vercel')
+                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL, 'github-vercel')
                 }
             }
         }),
         // Personal domain provider
         GithubProvider({
             id: 'github-personal',
-            clientId: process.env.GITHUB_ID_PERSONAL!,
-            clientSecret: process.env.GITHUB_SECRET_PERSONAL!,
+            clientId: process.env.GITHUB_ID_PERSONAL || '',
+            clientSecret: process.env.GITHUB_SECRET_PERSONAL || '',
             authorization: {
                 params: {
-                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL!, 'github-personal')
+                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL, 'github-personal')
                 }
             }
         }),

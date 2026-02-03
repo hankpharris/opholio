@@ -4,10 +4,10 @@
     "version": "1.0.0",
     "scripts": {
         "dev": "next dev",
-        "build": "next build",
+        "build": "npx prisma generate --schema=../packages/database/prisma/schema.prisma && next build",
         "start": "next start",
         "lint": "next lint",
-        "prisma": "prisma generate"
+        "prisma": "npx prisma generate"
     },
     "dependencies": {
         "@auth0/auth0-react": "^2.3.0",
@@ -81,6 +81,7 @@
         "eslint-plugin-react-compiler": "19.0.0-beta-aeaed83-20250323",
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.19",
-        "prettier": "*"
+        "prettier": "*",
+        "prisma": "^6.8.2"
     }
 }

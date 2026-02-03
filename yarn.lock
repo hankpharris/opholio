@@ -5380,6 +5380,7 @@ __metadata:
     postcss-import: "npm:^16.0.1"
     postcss-nesting: "npm:^12.0.2"
     prettier: "npm:*"
+    prisma: "npm:^6.8.2"
     react: "npm:^18.2.0"
     react-day-picker: "npm:8.10.1"
     react-dom: "npm:^18.2.0"
