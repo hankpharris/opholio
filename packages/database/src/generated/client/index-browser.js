@@ -130,7 +130,8 @@ exports.Prisma.ProjectScalarFieldEnum = {
   overviewImage2: 'overviewImage2',
   overviewImage3: 'overviewImage3',
   link: 'link',
-  gitHubLink: 'gitHubLink'
+  gitHubLink: 'gitHubLink',
+  isActive: 'isActive'
 };
 
 exports.Prisma.SortOrder = {
