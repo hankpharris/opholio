@@ -5,6 +5,7 @@
 **/.run
 **/.turbo
 **/.prisma
+**/.next
 **/dist
 **.env.local
 **.env
