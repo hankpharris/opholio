@@ -11,51 +11,16 @@ declare module "next-auth" {
     }
 }
 
-// Helper function to ensure proper URL construction
-const getCallbackUrl = (baseUrl: string | undefined, provider: string) => {
-    if (!baseUrl) return undefined;
-    // Remove trailing slash from base URL if it exists
-    const cleanBaseUrl = baseUrl.replace(/\/$/, '');
-    return `${cleanBaseUrl}/api/auth/callback/${provider}`;
-};
-
-// Log the callback URLs for debugging (only at runtime, not during build)
-if (typeof window === 'undefined' && process.env.NEXTAUTH_URL) {
-    console.log('Vercel callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL, 'github-vercel'));
-    console.log('Personal callback URL:', getCallbackUrl(process.env.NEXTAUTH_URL, 'github-personal'));
-}
-
 export const authOptions: NextAuthOptions = {
     providers: [
-        // Vercel domain provider
         GithubProvider({
-            id: 'github-vercel',
             clientId: process.env.GITHUB_ID || '',
             clientSecret: process.env.GITHUB_SECRET || '',
-            authorization: {
-                params: {
-                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL_INTERNAL, 'github-vercel')
-                }
-            }
-        }),
-        // Personal domain provider
-        GithubProvider({
-            id: 'github-personal',
-            clientId: process.env.GITHUB_ID_PERSONAL || '',
-            clientSecret: process.env.GITHUB_SECRET_PERSONAL || '',
-            authorization: {
-                params: {
-                    redirect_uri: getCallbackUrl(process.env.NEXTAUTH_URL, 'github-personal')
-                }
-            }
         }),
     ],
     callbacks: {
         async signIn({ user, account }) {
-            console.log('Sign in attempt with provider:', account?.provider);
-            console.log('Callback URL:', account?.redirect_uri);
-            
-            if (account?.provider === "github-vercel" || account?.provider === "github-personal") {
+            if (account?.provider === "github") {
                 const response = await fetch("https://api.github.com/user", {
                     headers: {
                         Authorization: `token ${account.access_token}`,
@@ -65,7 +30,7 @@ export const authOptions: NextAuthOptions = {
                 // Get the list of allowed users from env and split by comma
                 const allowedUsers = process.env.ALLOWED_GITHUB_USERS?.split(',') || [];
                 // Trim whitespace from each username and check if current user is allowed
-                return allowedUsers.map(user => user.trim()).includes(githubUser.login);
+                return allowedUsers.map(u => u.trim()).includes(githubUser.login);
             }
             return false;
         },
