@@ -84,6 +84,9 @@ next-env.d.ts
 packages/database/prisma/*.db
 packages/database/prisma/*.db-journal
 
+# Generated Prisma Client (regenerated on each platform)
+packages/database/src/generated/
+
 # Build outputs
 .turbo
 build/

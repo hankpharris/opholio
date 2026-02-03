@@ -78,13 +78,10 @@ async function main() {
 
     console.log(header('Wrote env vars'));
     const rootEnvPath = path.join(process.cwd(), '.env.local');
-    const frontendEnvPath = path.join(process.cwd(), 'frontend', '.env.local');
 
     upsertEnvFile(rootEnvPath, updates);
-    upsertEnvFile(frontendEnvPath, updates);
 
     console.log(`Updated: ${rootEnvPath}`);
-    console.log(`Updated: ${frontendEnvPath}`);
     console.log('Next step: push these env vars to Vercel (see README).');
 
     console.log(header('GitHub OAuth callback URL'));
