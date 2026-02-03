@@ -1,9 +1,15 @@
 import { OpenAI } from 'openai';
+import { getSiteSettings } from '@/lib/site-settings';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: Request) {
   try {
+    const settings = await getSiteSettings();
+    if (!settings.enableChatbot) {
+      return new Response('Chatbot disabled', { status: 403 });
+    }
+
     const { text } = await req.json();
 
     if (!text) {
