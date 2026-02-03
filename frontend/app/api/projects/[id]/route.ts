@@ -5,11 +5,13 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/auth';
 import { updateProject } from '@/lib/db';
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not defined');
+// Lazy SQL client getter to avoid build-time errors
+function getSql() {
+    if (!process.env.DATABASE_URL) {
+        throw new Error('DATABASE_URL is not defined');
+    }
+    return neon(process.env.DATABASE_URL);
 }
-
-const sql = neon(process.env.DATABASE_URL);
 
 // Set runtime to Node.js
 export const runtime = 'nodejs';
@@ -19,6 +21,7 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     try {
+        const sql = getSql();
         const id = parseInt(params.id);
         if (isNaN(id)) {
             return NextResponse.json(
@@ -103,6 +106,7 @@ export async function DELETE(
     }
 
     try {
+        const sql = getSql();
         const id = parseInt(params.id);
         if (isNaN(id)) {
             return NextResponse.json(

@@ -1,4 +1,5 @@
-import { fromBuffer } from "yauzl-promise";
+import "server-only";
+import JSZip from "jszip";
 import path from "node:path";
 import { backgroundPackManifestSchema } from "./validation";
 
@@ -23,30 +24,24 @@ const FILE_CONTENT_TYPES: Record<string, string> = {
 };
 
 export async function unzipPack(buffer: Buffer) {
-    const zip = await fromBuffer(buffer);
-    const entries = await zip.readEntries();
+    const zip = await JSZip.loadAsync(buffer);
     const files: UnzippedFile[] = [];
 
+    const entries = Object.values(zip.files);
     for (const entry of entries) {
-        if (entry.filename.endsWith("/")) {
+        if (entry.dir) {
             continue;
         }
 
-        const stream = await zip.openReadStream(entry);
-        const chunks: Buffer[] = [];
-        for await (const chunk of stream) {
-            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-        }
-
-        const filePath = normalizeZipPath(entry.filename);
+        const entryBuffer = await entry.async("nodebuffer");
+        const filePath = normalizeZipPath(entry.name);
         files.push({
             path: filePath,
-            buffer: Buffer.concat(chunks),
+            buffer: entryBuffer,
             contentType: contentTypeForPath(filePath),
         });
     }
 
-    await zip.close();
     return files;
 }
 

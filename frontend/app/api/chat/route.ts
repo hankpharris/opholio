@@ -3,18 +3,19 @@ import { neon } from '@neondatabase/serverless';
 import { ChatCompletionChunk } from 'openai/resources/chat/completions';
 import { getSiteSettings } from '@/lib/site-settings';
 
-// Create an OpenAI API client (that's edge friendly!)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
-
-// Initialize the database connection
-const sql = neon(process.env.DATABASE_URL!);
+// Lazy database connection getter to avoid build-time errors
+function getSql() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not defined');
+  }
+  return neon(process.env.DATABASE_URL);
+}
 
 // Function to get all projects from the database
 async function getAllProjects() {
   try {
     console.log('Attempting to fetch projects from database...');
+    const sql = getSql();
     const projects = await sql`
       SELECT 
         id,
@@ -39,6 +40,7 @@ async function getAllProjects() {
 // Function to get a specific project by ID
 async function getProjectById(id: number) {
   try {
+    const sql = getSql();
     const [project] = await sql`
       SELECT 
         id,
@@ -153,6 +155,10 @@ export async function POST(req: Request) {
       return new Response('Chatbot disabled', { status: 403 });
     }
 
+    if (!process.env.OPENAI_API_KEY) {
+      return new Response('OPENAI_API_KEY is not configured', { status: 503 });
+    }
+
     const { messages } = await req.json();
     
     // Get the detailed system message
@@ -162,6 +168,7 @@ export async function POST(req: Request) {
       content: systemMessageContent
     };
 
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [systemMessage, ...messages],
@@ -206,6 +213,10 @@ export async function GET(req: Request) {
   const settings = await getSiteSettings();
   if (!settings.enableChatbot) {
     return new Response('Chatbot disabled', { status: 403 });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return new Response('OPENAI_API_KEY is not configured', { status: 503 });
   }
 
   const { searchParams } = new URL(req.url);

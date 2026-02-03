@@ -1,25 +1,17 @@
 import { neon } from '@neondatabase/serverless';
 import { StatusEnum, projectSchema, Project } from './validation';
 
-// Validate required environment variables
-const requiredEnvVars = {
-    DATABASE_URL: process.env.DATABASE_URL
-} as const;
-
-// Check for missing environment variables
-const missingEnvVars = Object.entries(requiredEnvVars)
-    .filter(([_, value]) => !value)
-    .map(([key]) => key);
-
-if (missingEnvVars.length > 0) {
-    throw new Error(
-        `Missing required environment variables: ${missingEnvVars.join(', ')}. ` +
-        'Please check your .env file and ensure all required variables are set.'
-    );
+// Lazy database URL getter to avoid build-time errors
+function getDatabaseUrl(): string {
+    const url = process.env.DATABASE_URL;
+    if (!url) {
+        throw new Error(
+            'Missing required environment variable: DATABASE_URL. ' +
+            'Please check your .env file and ensure it is set.'
+        );
+    }
+    return url;
 }
-
-// Type assertion after validation
-const DATABASE_URL = requiredEnvVars.DATABASE_URL as string;
 
 interface ProjectQueryOptions {
     includeInactive?: boolean;
@@ -28,7 +20,7 @@ interface ProjectQueryOptions {
 export async function getProject(id: string, options: ProjectQueryOptions = {}): Promise<Project | null> {
     try {
         console.log('Fetching project with ID:', id);
-        const sql = neon(DATABASE_URL);
+        const sql = neon(getDatabaseUrl());
         const includeInactive = options.includeInactive ?? false;
         const numericId = parseInt(id);
         if (Number.isNaN(numericId)) {
@@ -94,7 +86,7 @@ export async function getProject(id: string, options: ProjectQueryOptions = {}):
 export async function getProjects(options: ProjectQueryOptions = {}): Promise<Project[]> {
     try {
         console.log('Fetching all projects');
-        const sql = neon(DATABASE_URL);
+        const sql = neon(getDatabaseUrl());
         const includeInactive = options.includeInactive ?? false;
         const result = includeInactive
             ? await sql`
@@ -159,7 +151,7 @@ export async function getProjects(options: ProjectQueryOptions = {}): Promise<Pr
 }
 
 export async function updateProject(id: number, data: Partial<Project>) {
-    const sql = neon(DATABASE_URL);
+    const sql = neon(getDatabaseUrl());
     const projects = await sql`
         UPDATE "Project"
         SET 

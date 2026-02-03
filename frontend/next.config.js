@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
     output: 'standalone',
+    experimental: {
+        externalDir: true,
+    },
+    transpilePackages: ["database"],
     images: {
         remotePatterns: [
             {
@@ -20,6 +26,10 @@ const nextConfig = {
         ];
     },
     webpack: (config, { isServer }) => {
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            database: path.resolve(__dirname, '../packages/database/src'),
+        };
         if (!isServer) {
             config.resolve.fallback = {
                 ...config.resolve.fallback,

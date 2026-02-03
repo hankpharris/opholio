@@ -1,5 +1,6 @@
 import { prisma } from "./prisma";
 import { siteSettingsSchema, siteSettingsUpdateSchema } from "./validation";
+import type { Prisma } from "database";
 
 export const DEFAULT_SITE_SETTINGS = {
     id: 1,
@@ -73,11 +74,23 @@ export async function updateSiteSettings(update: unknown) {
         data.backgroundConfig = {};
     }
 
+    // Convert to Prisma-compatible update input
+    const prismaUpdateData: Prisma.SiteSettingsUpdateInput = {
+        ...data,
+        backgroundConfig: data.backgroundConfig as Prisma.InputJsonValue | undefined,
+    };
+
+    const prismaCreateData: Prisma.SiteSettingsCreateInput = {
+        ...DEFAULT_SITE_SETTINGS,
+        ...data,
+        backgroundConfig: (data.backgroundConfig ?? DEFAULT_SITE_SETTINGS.backgroundConfig) as Prisma.InputJsonValue,
+    };
+
     try {
         const record = await prisma.siteSettings.upsert({
             where: { id: 1 },
-            create: { ...DEFAULT_SITE_SETTINGS, ...data },
-            update: data,
+            create: prismaCreateData,
+            update: prismaUpdateData,
         });
 
         return siteSettingsSchema.parse(record);
