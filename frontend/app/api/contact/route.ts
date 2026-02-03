@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
+import { getSiteSettings } from '@/lib/site-settings';
 
 // Lazy initialization to avoid build-time errors when env var is not available
 let resend: Resend | null = null;
@@ -13,6 +14,11 @@ function getResend() {
 
 export async function POST(request: Request) {
   try {
+    const settings = await getSiteSettings();
+    if (!settings.enableContactForm) {
+      return NextResponse.json({ error: 'Contact form disabled' }, { status: 403 });
+    }
+
     const { name, email, message } = await request.json();
 
     const data = await getResend().emails.send({

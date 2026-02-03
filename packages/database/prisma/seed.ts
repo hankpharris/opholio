@@ -9,7 +9,7 @@ const client = new PrismaClient();
 
 async function main() {
     console.log("Starting seed...");
-    console.log("Database URL:", process.env.POSTGRES_URL);
+    console.log("Database URL:", process.env.DATABASE_URL);
     
     try {
         // First, let's check if we can connect to the database

@@ -1,21 +1,38 @@
-export function AboutContent() {
+interface AboutContentProps {
+    title?: string;
+    tagline?: string;
+    aboutContent?: string;
+    avatarImageUrl?: string | null;
+}
+
+export function AboutContent({
+    title = "About Me",
+    tagline,
+    aboutContent = "",
+    avatarImageUrl,
+}: AboutContentProps) {
+    const paragraphs = aboutContent
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+
     return (
         <div className="container max-w-3xl mx-auto px-8 py-12 bg-white/90 rounded-2xl shadow-2xl backdrop-blur-md relative z-10">
-            <h1 className="text-4xl font-bold mb-8 text-center text-black drop-shadow-lg">About Me</h1>
+            <h1 className="text-4xl font-bold mb-3 text-center text-black drop-shadow-lg">{title}</h1>
+            {tagline && <p className="text-center text-gray-600 mb-8">{tagline}</p>}
             <div className="flex justify-center mb-8">
-                <img src="/Logo(Resized).png" alt="Logo" className="w-64 h-64 rounded-full object-cover" />
+                <img
+                    src={avatarImageUrl || "/Logo(Resized).png"}
+                    alt="Avatar"
+                    className="w-64 h-64 rounded-full object-cover"
+                />
             </div>
             <div className="text-lg text-gray-800 leading-relaxed space-y-4">
-                <p>
-                    Hello! My name is Henry Pharris. I'm a senior at Worcester Polytechnic Institute studying RBE (Robotics Engineering)
-                    with minors in Computer Science and Music.
-                </p>
-                <p>
-                    When outdoors I enjoy activities like snowboarding and sailing, but I also love making music and tinkering with both hardware and software when inside.
-                </p>
-                <p>
-                    If you have any interest in hiring me in any capacity, or any questions about my work, don't hesitate to reach out to me via my "Contact Me" form, accessible in the top right of the header. To see some of my work, check out my "Projects" page.
-                </p>
+                {paragraphs.length > 0 ? (
+                    paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)
+                ) : (
+                    <p>Add your About content from the admin panel.</p>
+                )}
             </div>
         </div>
     );

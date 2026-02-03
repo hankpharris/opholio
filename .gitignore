@@ -81,7 +81,6 @@ next-env.d.ts
 *.db
 *.sqlite
 *.sqlite3
-packages/database/prisma/migrations/
 packages/database/prisma/*.db
 packages/database/prisma/*.db-journal
 
