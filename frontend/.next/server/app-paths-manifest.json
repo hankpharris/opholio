@@ -1,0 +1,15 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/contact/route": "app/api/contact/route.js",
+  "/about/page": "app/about/page.js",
+  "/api/chat/route": "app/api/chat/route.js",
+  "/auth/signin/page": "app/auth/signin/page.js",
+  "/page": "app/page.js",
+  "/api/upload/route": "app/api/upload/route.js",
+  "/api/projects/[id]/route": "app/api/projects/[id]/route.js",
+  "/api/projects/route": "app/api/projects/route.js",
+  "/projects/[id]/page": "app/projects/[id]/page.js",
+  "/projects/page": "app/projects/page.js",
+  "/admin/page": "app/admin/page.js"
+}

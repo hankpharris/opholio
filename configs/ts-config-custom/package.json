@@ -1,0 +1,13 @@
+{
+    "name": "ts-config-custom",
+    "private": true,
+    "version": "1.0.1",
+    "scripts": {
+        "shared:tslint": "cd $INIT_CWD && tsc"
+    },
+    "devDependencies": {
+        "eslint-config-custom": "workspace:*",
+        "prettier-config-custom": "workspace:*",
+        "typescript": "*"
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "buildCommand": "yarn install && yarn build",
+    "outputDirectory": ".next",
+    "framework": "nextjs",
+    "installCommand": "yarn install",
+    "github": {
+        "silent": true
+    },
+    "git": {
+        "deploymentEnabled": {
+            "main": true
+        }
+    },
+    "functions": {
+        "app/api/**/*.ts": {
+            "memory": 1024,
+            "maxDuration": 10
+        }
+    }
+} 

@@ -1,0 +1,20 @@
+{
+    "name": "eslint-config-custom",
+    "private": true,
+    "main": "eslint.config.js",
+    "type": "module",
+    "version": "1.0.1",
+    "scripts": {
+        "shared:eslint": "eslint $INIT_CWD --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0",
+        "shared:eslint:fix": "eslint $INIT_CWD --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 --fix"
+    },
+    "devDependencies": {
+        "eslint": "*",
+        "eslint-config-prettier": "*",
+        "eslint-plugin-turbo": "*",
+        "prettier-config-custom": "workspace:*",
+        "turbo": "*",
+        "typescript": "*",
+        "typescript-eslint": "*"
+    }
+}

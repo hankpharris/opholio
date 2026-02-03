@@ -1,0 +1,13 @@
+{
+    "name": "prettier-config-custom",
+    "private": true,
+    "main": ".prettierrc.cjs",
+    "version": "1.0.1",
+    "scripts": {
+        "shared:prettier": "cd $INIT_CWD && prettier --ignore-path ${PROJECT_CWD}/configs/prettier-config-custom/.prettierignore --cache-location=.prettiercache --check . ",
+        "shared:prettier:fix": "cd $INIT_CWD && prettier --ignore-path ${PROJECT_CWD}/configs/prettier-config-custom/.prettierignore --cache-location=.prettiercache --write ."
+    },
+    "devDependencies": {
+        "prettier": "*"
+    }
+}
