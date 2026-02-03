@@ -74,4 +74,4 @@
             "isActive" = ${r.isActive}
         WHERE id = ${e}
         RETURNING id, name, status, "overviewText", description, "overviewImage1", "overviewImage2", "overviewImage3", link, "gitHubLink", "isActive"
-    `;if(!a||0===a.length)throw Error("Project not found");let n=a[0],c=i.PH.safeParse(n);if(!c.success)throw console.warn("Project validation failed:",c.error),Error("Invalid project data");return c.data}}};var r=require("../../../webpack-runtime.js");r.C(e);var t=e=>r(r.s=e),s=r.X(0,[499,24,143,718,236,935,923,29],()=>t(25245));module.exports=s})();
+    `;if(!a||0===a.length)throw Error("Project not found");let n=a[0],c=i.PH.safeParse(n);if(!c.success)throw console.warn("Project validation failed:",c.error),Error("Invalid project data");return c.data}}};var r=require("../../../webpack-runtime.js");r.C(e);var t=e=>r(r.s=e),s=r.X(0,[499,24,143,718,236,935,923,317],()=>t(25245));module.exports=s})();
