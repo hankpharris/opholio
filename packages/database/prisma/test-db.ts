@@ -10,7 +10,7 @@ async function testDatabase() {
     
     try {
         console.log("Testing database connection...");
-        console.log("Database URL:", process.env.POSTGRES_URL);
+        console.log("Database URL:", process.env.DATABASE_URL);
         
         // Test connection
         await prisma.$connect();
