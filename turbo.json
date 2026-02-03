@@ -1,0 +1,66 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": ["**/.env.*local"],
+    "pipeline": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": [".next/**", "!.next/cache/**"]
+        },
+        "lint": {},
+        "dev": {
+            "cache": false,
+            "persistent": true
+        }
+    },
+    "globalEnv": [
+        "OPENAI_API_KEY",
+        "DATABASE_URL",
+        "NEXT_PUBLIC_OPENAI_API_KEY",
+        "NEXT_PUBLIC_DATABASE_URL"
+    ],
+    "ui": "stream",
+    "tasks": {
+        "dependencies": {
+            "inputs": ["./env/*"],
+            "outputs": []
+        },
+        "lint": {
+            "dependsOn": ["^dependencies", "^build:dev"]
+        },
+        "lint:fix": {
+            "dependsOn": ["^dependencies"]
+        },
+        "build:dev": {
+            "dependsOn": ["^dependencies", "^build:dev"]
+        },
+        "dev": {
+            "dependsOn": ["^build:dev"],
+            "cache": false,
+            "persistent": true
+        },
+        "deploy": {
+            "dependsOn": ["^build"],
+            "cache": false,
+            "persistent": true
+        },
+        "build": {
+            "inputs": ["./env/*"],
+            "env": [
+                "BACKEND_PORT",
+                "FRONTEND_PORT",
+                "BACKEND_SOURCE",
+                "BACKEND_URL",
+                "PORT",
+                "POSTGRES_PASSWORD",
+                "POSTGRES_DB",
+                "POSTGRES_PORT",
+                "POSTGRES_HOST",
+                "POSTGRES_URL",
+                "OPENAI_API_KEY",
+                "NEXT_PUBLIC_OPENAI_API_KEY"
+            ],
+            "dependsOn": ["^dependencies"],
+            "outputs": ["build/**"]
+        }
+    }
+}

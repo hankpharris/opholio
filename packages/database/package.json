@@ -1,0 +1,37 @@
+{
+    "private": true,
+    "name": "database",
+    "version": "1.0.1",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "browser": "./src/index.ts",
+    "prisma": {
+        "seed": "tsx prisma/seed.ts"
+    },
+    "scripts": {
+        "lint": "dotenv -e ${PROJECT_CWD}/.env -- yarn shared:prettier && dotenv -e ${PROJECT_CWD}/.env -- yarn shared:eslint && dotenv -e ${PROJECT_CWD}/.env -- yarn shared:tslint",
+        "lint:fix": "dotenv -e ${PROJECT_CWD}/.env -- yarn shared:prettier:fix && dotenv -e ${PROJECT_CWD}/.env -- yarn shared:eslint:fix && dotenv -e ${PROJECT_CWD}/.env -- yarn shared:tslint",
+        "generate": "dotenv -e ${PROJECT_CWD}/.env -- prisma generate --schema=./prisma/schema.prisma",
+        "migrate:dev": "dotenv -e ${PROJECT_CWD}/.env -- prisma migrate dev",
+        "migrate:reset": "dotenv -e ${PROJECT_CWD}/.env -- prisma migrate reset",
+        "db:push": "dotenv -e ${PROJECT_CWD}/.env -- prisma db push",
+        "studio": "dotenv -e ${PROJECT_CWD}/.env -- prisma studio",
+        "test-db": "yarn generate && tsx prisma/test-db.ts",
+        "seed": "dotenv -e ${PROJECT_CWD}/.env -- tsx prisma/seed.ts"
+    },
+    "devDependencies": {
+        "@yarnpkg/pnpify": "^4.0.0-rc.45",
+        "eslint": "*",
+        "eslint-config-custom": "workspace:*",
+        "prettier": "*",
+        "prettier-config-custom": "workspace:*",
+        "prisma": "^6.8.2",
+        "ts-config-custom": "workspace:*",
+        "tsx": "^4.7.1"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.8.2",
+        "dotenv": "*",
+        "dotenv-cli": "*"
+    }
+}

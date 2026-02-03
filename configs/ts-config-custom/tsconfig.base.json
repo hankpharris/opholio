@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "useDefineForClassFields": true,
+        "target": "ESNext",
+        "allowJs": true,
+        "allowImportingTsExtensions": true,
+        "skipLibCheck": false,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "react"
+    },
+    "exclude": ["**/node_modules", "**/.turbo", "**/build", "**/coverage", "**/.prisma", "**/.yarn"]
+}

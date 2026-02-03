@@ -1,0 +1,107 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+**/.idea
+**/.vscode
+**/.run
+**/.turbo
+**/.prisma
+**/dist
+**.env.local
+**.env
+**.env.backup
+
+out
+
+# testing
+**/coverage
+
+# production
+**/build
+
+**/node_modules
+
+# misc
+**/.DS_Store
+**/yarn-error.log*
+.env
+.env.wpi
+.env.prod
+.env.aws
+
+.yarn/*
+!.yarn/patches/
+!.yarn/plugins/
+!.yarn/releases/
+!.yarn/sdks/
+!.yarn/versions/
+.yarnrc.yml
+.pnp.*
+.pnp.loader.cjs
+.pnp.loader.mjs
+
+**/.prettiercache
+**/.vite
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+out/
+
+# Misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+packages/database/prisma/migrations/
+packages/database/prisma/*.db
+packages/database/prisma/*.db-journal
+
+# Build outputs
+.turbo
+build/
+dist/
+
+# Cache
+.cache
+.eslintcache
+.prettiercache
+
+# Logs
+logs
+*.log
+
+# System Files
+Thumbs.db
+.DS_Store
+
+# vercel
+.vercel
+.env*.local

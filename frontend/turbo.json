@@ -1,0 +1,43 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": ["**/.env.*local"],
+    "pipeline": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": [".next/**", "!.next/cache/**"]
+        },
+        "lint": {},
+        "dev": {
+            "cache": false,
+            "persistent": true
+        }
+    },
+    "globalEnv": [
+        "OPENAI_API_KEY",
+        "DATABASE_URL",
+        "RESEND_API_KEY",
+        "NEXT_PUBLIC_OPENAI_API_KEY",
+        "NEXT_PUBLIC_DATABASE_URL"
+    ],
+    "extends": ["//"],
+    "tasks": {
+        "dev": {
+            "env": [
+                "FRONTEND_PORT",
+                "BACKEND_PORT",
+                "BACKEND_SOURCE",
+                "BACKEND_URL",
+                "OPENAI_API_KEY",
+                "NEXT_PUBLIC_OPENAI_API_KEY"
+            ]
+        },
+        "deploy": {
+            "env": [
+                "FRONTEND_PORT",
+                "BACKEND_URL",
+                "OPENAI_API_KEY",
+                "NEXT_PUBLIC_OPENAI_API_KEY"
+            ]
+        }
+    }
+}
