@@ -1,15 +1,24 @@
 import { OpenAI } from 'openai';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { getSiteSettings } from '@/lib/site-settings';
 
 export async function POST(req: Request) {
   try {
+    const settings = await getSiteSettings();
+    if (!settings.enableChatbot) {
+      return new Response('Chatbot disabled', { status: 403 });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return new Response('OPENAI_API_KEY is not configured', { status: 503 });
+    }
+
     const { text } = await req.json();
 
     if (!text) {
       return new Response('Text is required', { status: 400 });
     }
 
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const audio = await openai.audio.speech.create({
       model: "tts-1",
       voice: "onyx",

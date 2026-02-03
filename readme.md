@@ -34,10 +34,18 @@ After storage is attached, pull env so you get DB + Blob variables locally:
 
 ```bash
 npx vercel link
-npx vercel env pull ./frontend/.env.local
+npx vercel env pull
 ```
 
-If you already have a repo-root `.env.local`, copy/move it to `frontend/.env.local` so Next.js picks it up.
+This creates/updates a repo-root `.env.local`. Copy it to `frontend/.env.local` so Next.js picks it up:
+
+```sh
+# macOS / Linux
+cp .env.local frontend/.env.local
+
+# Windows (PowerShell)
+Copy-Item .env.local frontend\\.env.local -Force
+```
 
 ### 4) Configure admin auth (single-user GitHub login)
 
@@ -49,7 +57,9 @@ Fast path (recommended): run the helper to write your local env file:
 yarn setup:nextauth
 ```
 
-The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and writes the values into `frontend/.env.local`.
+The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and updates both:
+- `.env.local`
+- `frontend/.env.local`
 
 You still must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
 
@@ -65,7 +75,7 @@ Notes:
 - This repo currently expects two GitHub credential pairs. For quickstart, set `GITHUB_ID_PERSONAL`=`GITHUB_ID` and `GITHUB_SECRET_PERSONAL`=`GITHUB_SECRET`.
 - If GitHub shows "Url must be a valid URL", it usually means the URL is missing the `https://` prefix or includes quotes/spaces. A Vercel URL is valid even if the deployment currently shows an error page.
 - Workaround if you are blocked: create the OAuth app using `http://localhost:3000` as both URLs, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live.
- - A failed deployment does not prevent you from using the Vercel URL for the OAuth app. GitHub just requires a syntactically valid URL (must start with `https://` or `http://`).
+- A failed deployment does not prevent you from using the Vercel URL for the OAuth app. GitHub just requires a syntactically valid URL (must start with `https://` or `http://`).
 
 Push your local env vars to Vercel (recommended):
 
@@ -74,14 +84,24 @@ npx vercel link
 yarn vercel:env:push
 ```
 
-This pushes the auth/public URL env vars from `frontend/.env.local` into your Vercel project (defaults to production).
+This pushes the auth/public URL env vars from `.env.local` (or `frontend/.env.local`) into your Vercel project (defaults to production).
 
 ### 5) Pull env again (after pushing auth/public URL vars)
 
-After you add auth/public URL env vars, pull again so `frontend/.env.local` is up to date:
+After you push auth/public URL env vars, pull again so your local files match what Vercel has:
 
 ```bash
-npx vercel env pull ./frontend/.env.local
+npx vercel env pull
+```
+
+Then copy it into the Next app folder:
+
+```sh
+# macOS / Linux
+cp .env.local frontend/.env.local
+
+# Windows (PowerShell)
+Copy-Item .env.local frontend\\.env.local -Force
 ```
 
 ### 6) Initialize the database schema (Prisma)

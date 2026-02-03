@@ -130,12 +130,48 @@ exports.Prisma.ProjectScalarFieldEnum = {
   overviewImage2: 'overviewImage2',
   overviewImage3: 'overviewImage3',
   link: 'link',
-  gitHubLink: 'gitHubLink'
+  gitHubLink: 'gitHubLink',
+  isActive: 'isActive'
+};
+
+exports.Prisma.BackgroundPackScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  entryUrl: 'entryUrl',
+  manifestUrl: 'manifestUrl',
+  previewUrl: 'previewUrl',
+  interactive: 'interactive',
+  allowExternal: 'allowExternal',
+  manifest: 'manifest',
+  uploadedBlobUrls: 'uploadedBlobUrls',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiteSettingsScalarFieldEnum = {
+  id: 'id',
+  enableBackground: 'enableBackground',
+  enableChatbot: 'enableChatbot',
+  enableContactForm: 'enableContactForm',
+  activeBackgroundPackId: 'activeBackgroundPackId',
+  backgroundConfig: 'backgroundConfig',
+  backgroundQuality: 'backgroundQuality',
+  reducedMotionOverride: 'reducedMotionOverride',
+  siteTitle: 'siteTitle',
+  tagline: 'tagline',
+  aboutContent: 'aboutContent',
+  avatarImageUrl: 'avatarImageUrl',
+  logoImageUrl: 'logoImageUrl'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -147,6 +183,12 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.Status = exports.$Enums.Status = {
   InProgress: 'InProgress',
   CompleteMaintained: 'CompleteMaintained',
@@ -155,7 +197,9 @@ exports.Status = exports.$Enums.Status = {
 };
 
 exports.Prisma.ModelName = {
-  Project: 'Project'
+  Project: 'Project',
+  BackgroundPack: 'BackgroundPack',
+  SiteSettings: 'SiteSettings'
 };
 
 /**
