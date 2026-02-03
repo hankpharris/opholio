@@ -27,4 +27,40 @@ model Project {
   overviewImage3 String?
   link           String?
   gitHubLink     String?
+  isActive       Boolean @default(true)
+}
+
+model BackgroundPack {
+  id               String   @id @default(uuid())
+  name             String
+  version          String
+  entryUrl         String
+  manifestUrl      String
+  previewUrl       String?
+  interactive      Boolean  @default(false)
+  allowExternal    Boolean  @default(false)
+  manifest         Json
+  uploadedBlobUrls Json     @default("[]")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  siteSettings SiteSettings[]
+}
+
+model SiteSettings {
+  id                     Int      @id @default(autoincrement())
+  enableBackground       Boolean  @default(true)
+  enableChatbot          Boolean  @default(false)
+  enableContactForm      Boolean  @default(false)
+  activeBackgroundPackId String?
+  backgroundConfig       Json     @default("{}")
+  backgroundQuality      String   @default("med")
+  reducedMotionOverride  Boolean?
+  siteTitle              String   @default("Portfolio")
+  tagline                String   @default("")
+  aboutContent           String   @default("")
+  avatarImageUrl         String?
+  logoImageUrl           String?
+
+  activeBackgroundPack BackgroundPack? @relation(fields: [activeBackgroundPackId], references: [id])
 }

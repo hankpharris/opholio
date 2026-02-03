@@ -1,13 +1,21 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors when env var is not available
+let resend: Resend | null = null;
+
+function getResend() {
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 export async function POST(request: Request) {
   try {
     const { name, email, message } = await request.json();
 
-    const data = await resend.emails.send({
+    const data = await getResend().emails.send({
       from: 'Portfolio Contact Form <onboarding@resend.dev>',
       to: process.env.CONTACT_EMAIL!,
       subject: `New Contact Form Submission from ${name}`,

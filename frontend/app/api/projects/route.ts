@@ -4,17 +4,20 @@ import { projectSchema, type Project } from '@/lib/validation';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/auth';
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not defined');
+// Lazy SQL client getter to avoid build-time errors
+function getSql() {
+    if (!process.env.DATABASE_URL) {
+        throw new Error('DATABASE_URL is not defined');
+    }
+    return neon(process.env.DATABASE_URL);
 }
-
-const sql = neon(process.env.DATABASE_URL);
 
 // Set runtime to Node.js
 export const runtime = 'nodejs';
 
 export async function GET() {
     try {
+        const sql = getSql();
         const projects = await sql`
             SELECT 
                 id,
@@ -64,6 +67,7 @@ export async function POST(request: Request) {
     }
 
     try {
+        const sql = getSql();
         const body = await request.json();
         const project = await sql`
             INSERT INTO "Project" (name, status, "overviewText", description, "overviewImage1", "overviewImage2", "overviewImage3", link, "gitHubLink", "isActive")

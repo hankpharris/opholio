@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next'
 import { getProjects } from '@/lib/db'
 
+// Generate sitemap at request time to access database
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com'
   

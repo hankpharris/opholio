@@ -35,11 +35,17 @@ function upsertEnvLines(existing, updates) {
   return `${updatedLines.join('\n').replace(/\n+$/, '')}\n`;
 }
 
+function upsertEnvFile(envPath, updates) {
+  const previous = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
+  fs.mkdirSync(path.dirname(envPath), { recursive: true });
+  fs.writeFileSync(envPath, upsertEnvLines(previous, updates), 'utf8');
+}
+
 async function main() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
   try {
-    console.log('NextAuth quick setup (writes to frontend/.env.local).');
+    console.log('NextAuth quick setup (updates .env.local files).');
     console.log('Tip: use your Vercel Production URL, e.g. https://your-project.vercel.app');
 
     const siteUrlInput = await rl.question('Site URL: ');
@@ -58,9 +64,6 @@ async function main() {
 
     const nextAuthSecret = crypto.randomBytes(32).toString('base64');
 
-    const envPath = path.join(process.cwd(), 'frontend', '.env.local');
-    const previous = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-
     const updates = {
       NEXTAUTH_URL: siteUrl,
       NEXTAUTH_URL_INTERNAL: siteUrl,
@@ -73,11 +76,15 @@ async function main() {
       ...(githubClientSecret ? { GITHUB_SECRET: githubClientSecret, GITHUB_SECRET_PERSONAL: githubClientSecret } : {}),
     };
 
-    fs.mkdirSync(path.dirname(envPath), { recursive: true });
-    fs.writeFileSync(envPath, upsertEnvLines(previous, updates), 'utf8');
-
     console.log(header('Wrote env vars'));
-    console.log(`Updated: ${envPath}`);
+    const rootEnvPath = path.join(process.cwd(), '.env.local');
+    const frontendEnvPath = path.join(process.cwd(), 'frontend', '.env.local');
+
+    upsertEnvFile(rootEnvPath, updates);
+    upsertEnvFile(frontendEnvPath, updates);
+
+    console.log(`Updated: ${rootEnvPath}`);
+    console.log(`Updated: ${frontendEnvPath}`);
     console.log('Next step: push these env vars to Vercel (see README).');
 
     console.log(header('GitHub OAuth callback URL'));
