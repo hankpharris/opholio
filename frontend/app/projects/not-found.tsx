@@ -1,11 +1,8 @@
-import Link from 'next/link';
-import { AnimatedBackground } from '@/components/AnimatedBackground';
 import { Button } from '@/components/buttons/Button';
 
 export default function ProjectNotFound() {
     return (
         <div className="min-h-screen relative">
-            <AnimatedBackground />
             <div className="relative z-10 flex items-center justify-center min-h-screen">
                 <div className="text-center space-y-6">
                     <h1 className="text-4xl font-bold text-gray-800">Project Not Found</h1>
