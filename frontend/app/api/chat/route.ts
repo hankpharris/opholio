@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai';
 import { neon } from '@neondatabase/serverless';
 import { ChatCompletionChunk } from 'openai/resources/chat/completions';
+import { getSiteSettings } from '@/lib/site-settings';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -147,6 +148,11 @@ IMPORTANT: Use ONLY the actual data provided above. Never use placeholder text o
 
 export async function POST(req: Request) {
   try {
+    const settings = await getSiteSettings();
+    if (!settings.enableChatbot) {
+      return new Response('Chatbot disabled', { status: 403 });
+    }
+
     const { messages } = await req.json();
     
     // Get the detailed system message
@@ -197,6 +203,11 @@ export async function POST(req: Request) {
 
 // Add a new endpoint for TTS
 export async function GET(req: Request) {
+  const settings = await getSiteSettings();
+  if (!settings.enableChatbot) {
+    return new Response('Chatbot disabled', { status: 403 });
+  }
+
   const { searchParams } = new URL(req.url);
   const text = searchParams.get('text');
 

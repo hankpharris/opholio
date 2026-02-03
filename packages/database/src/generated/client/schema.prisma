@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum Status {
@@ -27,4 +27,5 @@ model Project {
   overviewImage3 String?
   link           String?
   gitHubLink     String?
+  isActive       Boolean @default(true)
 }

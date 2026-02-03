@@ -919,6 +919,7 @@ export namespace Prisma {
     overviewImage3: string | null
     link: string | null
     gitHubLink: string | null
+    isActive: boolean | null
   }
 
   export type ProjectMaxAggregateOutputType = {
@@ -932,6 +933,7 @@ export namespace Prisma {
     overviewImage3: string | null
     link: string | null
     gitHubLink: string | null
+    isActive: boolean | null
   }
 
   export type ProjectCountAggregateOutputType = {
@@ -945,6 +947,7 @@ export namespace Prisma {
     overviewImage3: number
     link: number
     gitHubLink: number
+    isActive: number
     _all: number
   }
 
@@ -968,6 +971,7 @@ export namespace Prisma {
     overviewImage3?: true
     link?: true
     gitHubLink?: true
+    isActive?: true
   }
 
   export type ProjectMaxAggregateInputType = {
@@ -981,6 +985,7 @@ export namespace Prisma {
     overviewImage3?: true
     link?: true
     gitHubLink?: true
+    isActive?: true
   }
 
   export type ProjectCountAggregateInputType = {
@@ -994,6 +999,7 @@ export namespace Prisma {
     overviewImage3?: true
     link?: true
     gitHubLink?: true
+    isActive?: true
     _all?: true
   }
 
@@ -1094,6 +1100,7 @@ export namespace Prisma {
     overviewImage3: string | null
     link: string | null
     gitHubLink: string | null
+    isActive: boolean
     _count: ProjectCountAggregateOutputType | null
     _avg: ProjectAvgAggregateOutputType | null
     _sum: ProjectSumAggregateOutputType | null
@@ -1126,6 +1133,7 @@ export namespace Prisma {
     overviewImage3?: boolean
     link?: boolean
     gitHubLink?: boolean
+    isActive?: boolean
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1139,6 +1147,7 @@ export namespace Prisma {
     overviewImage3?: boolean
     link?: boolean
     gitHubLink?: boolean
+    isActive?: boolean
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1152,6 +1161,7 @@ export namespace Prisma {
     overviewImage3?: boolean
     link?: boolean
     gitHubLink?: boolean
+    isActive?: boolean
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectScalar = {
@@ -1165,9 +1175,10 @@ export namespace Prisma {
     overviewImage3?: boolean
     link?: boolean
     gitHubLink?: boolean
+    isActive?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "status" | "description" | "overviewText" | "overviewImage1" | "overviewImage2" | "overviewImage3" | "link" | "gitHubLink", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "status" | "description" | "overviewText" | "overviewImage1" | "overviewImage2" | "overviewImage3" | "link" | "gitHubLink" | "isActive", ExtArgs["result"]["project"]>
 
   export type $ProjectPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Project"
@@ -1183,6 +1194,7 @@ export namespace Prisma {
       overviewImage3: string | null
       link: string | null
       gitHubLink: string | null
+      isActive: boolean
     }, ExtArgs["result"]["project"]>
     composites: {}
   }
@@ -1616,6 +1628,7 @@ export namespace Prisma {
     readonly overviewImage3: FieldRef<"Project", 'String'>
     readonly link: FieldRef<"Project", 'String'>
     readonly gitHubLink: FieldRef<"Project", 'String'>
+    readonly isActive: FieldRef<"Project", 'Boolean'>
   }
     
 
@@ -2006,7 +2019,8 @@ export namespace Prisma {
     overviewImage2: 'overviewImage2',
     overviewImage3: 'overviewImage3',
     link: 'link',
-    gitHubLink: 'gitHubLink'
+    gitHubLink: 'gitHubLink',
+    isActive: 'isActive'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
@@ -2084,6 +2098,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2114,6 +2135,7 @@ export namespace Prisma {
     overviewImage3?: StringNullableFilter<"Project"> | string | null
     link?: StringNullableFilter<"Project"> | string | null
     gitHubLink?: StringNullableFilter<"Project"> | string | null
+    isActive?: BoolFilter<"Project"> | boolean
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -2127,6 +2149,7 @@ export namespace Prisma {
     overviewImage3?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
     gitHubLink?: SortOrderInput | SortOrder
+    isActive?: SortOrder
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -2143,6 +2166,7 @@ export namespace Prisma {
     overviewImage3?: StringNullableFilter<"Project"> | string | null
     link?: StringNullableFilter<"Project"> | string | null
     gitHubLink?: StringNullableFilter<"Project"> | string | null
+    isActive?: BoolFilter<"Project"> | boolean
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -2156,6 +2180,7 @@ export namespace Prisma {
     overviewImage3?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
     gitHubLink?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     _count?: ProjectCountOrderByAggregateInput
     _avg?: ProjectAvgOrderByAggregateInput
     _max?: ProjectMaxOrderByAggregateInput
@@ -2177,6 +2202,7 @@ export namespace Prisma {
     overviewImage3?: StringNullableWithAggregatesFilter<"Project"> | string | null
     link?: StringNullableWithAggregatesFilter<"Project"> | string | null
     gitHubLink?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Project"> | boolean
   }
 
   export type ProjectCreateInput = {
@@ -2189,6 +2215,7 @@ export namespace Prisma {
     overviewImage3?: string | null
     link?: string | null
     gitHubLink?: string | null
+    isActive?: boolean
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -2202,6 +2229,7 @@ export namespace Prisma {
     overviewImage3?: string | null
     link?: string | null
     gitHubLink?: string | null
+    isActive?: boolean
   }
 
   export type ProjectUpdateInput = {
@@ -2214,6 +2242,7 @@ export namespace Prisma {
     overviewImage3?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     gitHubLink?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -2227,6 +2256,7 @@ export namespace Prisma {
     overviewImage3?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     gitHubLink?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProjectCreateManyInput = {
@@ -2240,6 +2270,7 @@ export namespace Prisma {
     overviewImage3?: string | null
     link?: string | null
     gitHubLink?: string | null
+    isActive?: boolean
   }
 
   export type ProjectUpdateManyMutationInput = {
@@ -2252,6 +2283,7 @@ export namespace Prisma {
     overviewImage3?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     gitHubLink?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProjectUncheckedUpdateManyInput = {
@@ -2265,6 +2297,7 @@ export namespace Prisma {
     overviewImage3?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     gitHubLink?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -2315,6 +2348,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -2331,6 +2369,7 @@ export namespace Prisma {
     overviewImage3?: SortOrder
     link?: SortOrder
     gitHubLink?: SortOrder
+    isActive?: SortOrder
   }
 
   export type ProjectAvgOrderByAggregateInput = {
@@ -2348,6 +2387,7 @@ export namespace Prisma {
     overviewImage3?: SortOrder
     link?: SortOrder
     gitHubLink?: SortOrder
+    isActive?: SortOrder
   }
 
   export type ProjectMinOrderByAggregateInput = {
@@ -2361,6 +2401,7 @@ export namespace Prisma {
     overviewImage3?: SortOrder
     link?: SortOrder
     gitHubLink?: SortOrder
+    isActive?: SortOrder
   }
 
   export type ProjectSumOrderByAggregateInput = {
@@ -2429,6 +2470,14 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2439,6 +2488,10 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -2493,6 +2546,11 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -2575,6 +2633,14 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
 
