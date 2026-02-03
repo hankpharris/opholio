@@ -1,4 +1,4 @@
-// File: C:\Users\henry\WebstormProjects\portfolio3\frontend\app\api\chat\route.ts
+// File: C:\Users\henry\cursourProjects\ofolio\frontend\app\api\chat\route.ts
 import * as entry from '../../../../../app/api/chat/route.js'
 import type { NextRequest } from 'next/server.js'
 

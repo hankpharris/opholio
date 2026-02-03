@@ -1,4 +1,4 @@
-// File: C:\Users\henry\WebstormProjects\portfolio3\frontend\app\api\upload\route.ts
+// File: C:\Users\henry\cursourProjects\ofolio\frontend\app\api\upload\route.ts
 import * as entry from '../../../../../app/api/upload/route.js'
 import type { NextRequest } from 'next/server.js'
 

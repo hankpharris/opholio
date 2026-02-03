@@ -1,12 +1,13 @@
 import { prisma } from "./prisma";
 import { backgroundPackSchema } from "./validation";
+import type { BackgroundPack, Prisma } from "database";
 
 export async function listBackgroundPacks() {
-    const packs = await prisma.backgroundPack.findMany({
+    const packs: BackgroundPack[] = await prisma.backgroundPack.findMany({
         orderBy: { createdAt: "desc" },
     });
 
-    return packs.map((pack) =>
+    return packs.map((pack: BackgroundPack) =>
         backgroundPackSchema.parse({
             ...pack,
             uploadedBlobUrls: (pack.uploadedBlobUrls as string[]) ?? [],
@@ -15,7 +16,7 @@ export async function listBackgroundPacks() {
 }
 
 export async function getBackgroundPack(id: string) {
-    const pack = await prisma.backgroundPack.findUnique({ where: { id } });
+    const pack: BackgroundPack | null = await prisma.backgroundPack.findUnique({ where: { id } });
     if (!pack) return null;
     return backgroundPackSchema.parse({
         ...pack,
@@ -43,8 +44,8 @@ export async function createBackgroundPack(data: {
             previewUrl: data.previewUrl ?? null,
             interactive: data.interactive,
             allowExternal: data.allowExternal,
-            manifest: data.manifest,
-            uploadedBlobUrls: data.uploadedBlobUrls,
+            manifest: data.manifest as Prisma.InputJsonValue,
+            uploadedBlobUrls: data.uploadedBlobUrls as Prisma.InputJsonValue,
         },
     });
 

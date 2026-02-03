@@ -12,7 +12,13 @@ function parseDotenv(content) {
     const idx = trimmed.indexOf('=');
     if (idx === -1) continue;
     const key = trimmed.slice(0, idx).trim();
-    const value = trimmed.slice(idx + 1).trim();
+    let value = trimmed.slice(idx + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
     map.set(key, value);
   }
   return map;
@@ -53,13 +59,16 @@ async function main() {
   }
 
   const envPath = path.join(process.cwd(), 'frontend', '.env.local');
-  if (!fs.existsSync(envPath)) {
-    console.error(`Missing ${envPath}`);
-    console.error('Run `yarn setup:nextauth` (and/or `npx vercel env pull ./frontend/.env.local`) first.');
+  const rootEnvPath = path.join(process.cwd(), '.env.local');
+  const chosenEnvPath = fs.existsSync(rootEnvPath) ? rootEnvPath : envPath;
+
+  if (!fs.existsSync(chosenEnvPath)) {
+    console.error(`Missing ${rootEnvPath} (and ${envPath})`);
+    console.error('Run `yarn setup:nextauth` (and/or `npx vercel env pull`) first.');
     process.exit(1);
   }
 
-  const env = parseDotenv(fs.readFileSync(envPath, 'utf8'));
+  const env = parseDotenv(fs.readFileSync(chosenEnvPath, 'utf8'));
 
   const keysToPush = [
     'NEXTAUTH_URL',
@@ -85,9 +94,11 @@ async function main() {
         ? envChoice
         : 'production';
 
+    console.log(`Reading env vars from: ${chosenEnvPath}`);
+
     const missing = keysToPush.filter((k) => !env.get(k));
     if (missing.length > 0) {
-      console.log('Skipping missing values in frontend/.env.local:');
+      console.log('Skipping missing values:');
       for (const k of missing) console.log(`- ${k}`);
       console.log('');
     }
@@ -108,4 +119,3 @@ main().catch((err) => {
   console.error(`Error: ${err?.message ?? String(err)}`);
   process.exit(1);
 });
-
