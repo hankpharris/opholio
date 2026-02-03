@@ -51,11 +51,7 @@
                 "BACKEND_SOURCE",
                 "BACKEND_URL",
                 "PORT",
-                "POSTGRES_PASSWORD",
-                "POSTGRES_DB",
-                "POSTGRES_PORT",
-                "POSTGRES_HOST",
-                "POSTGRES_URL",
+                "DATABASE_URL",
                 "OPENAI_API_KEY",
                 "NEXT_PUBLIC_OPENAI_API_KEY"
             ],

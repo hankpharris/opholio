@@ -216,7 +216,7 @@ const config = {
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "POSTGRES_URL",
+        "fromEnvVar": "DATABASE_URL",
         "value": null
       }
     }
