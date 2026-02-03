@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
-import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { BackgroundLayer } from "@/components/BackgroundLayer";
+import { getSiteSettingsWithActivePack } from "@/lib/site-settings";
 
 const inter = Inter({ subsets: ["latin"] });
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com';
@@ -49,11 +50,12 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const { settings, activePack } = await getSiteSettingsWithActivePack();
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "Person",
@@ -86,8 +88,20 @@ export default function RootLayout({
                 />
             </head>
             <body className={inter.className}>
-                <AnimatedBackground />
-                <Header />
+                <BackgroundLayer
+                    enabled={settings.enableBackground}
+                    entryUrl={activePack?.entryUrl ?? null}
+                    interactive={activePack?.interactive ?? false}
+                    config={settings.backgroundConfig as Record<string, unknown>}
+                    quality={settings.backgroundQuality}
+                    reducedMotionOverride={settings.reducedMotionOverride}
+                />
+                <Header
+                    siteTitle={settings.siteTitle}
+                    logoUrl={settings.logoImageUrl ?? undefined}
+                    showChatbot={settings.enableChatbot}
+                    showContactForm={settings.enableContactForm}
+                />
                 <main className="pt-[88px]">
                     {children}
                 </main>

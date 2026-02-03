@@ -16,6 +16,12 @@ enum Status {
   Planned
 }
 
+enum BackgroundQuality {
+  low
+  med
+  high
+}
+
 model Project {
   id            Int      @id @default(autoincrement())
   name          String
@@ -28,4 +34,41 @@ model Project {
   link          String?
   gitHubLink    String?
   isActive      Boolean  @default(true)
-} 
+}
+
+model SiteSettings {
+  id                      Int               @id
+  enableBackground        Boolean           @default(true)
+  enableChatbot           Boolean           @default(false)
+  enableContactForm       Boolean           @default(false)
+  activeBackgroundPackId  String?
+  backgroundConfig        Json              @default("{}")
+  backgroundQuality       BackgroundQuality @default(med)
+  reducedMotionOverride   Boolean?
+  siteTitle               String            @default("Portfolio")
+  tagline                 String            @default("")
+  aboutContent            String            @db.Text @default("")
+  avatarImageUrl          String?
+  logoImageUrl            String?
+  activeBackgroundPack    BackgroundPack?   @relation(fields: [activeBackgroundPackId], references: [id], onDelete: SetNull)
+
+  @@map("SiteSettings")
+}
+
+model BackgroundPack {
+  id                String        @id @default(cuid())
+  name              String
+  version           String
+  entryUrl          String
+  manifestUrl       String
+  previewUrl        String?
+  interactive       Boolean       @default(false)
+  allowExternal     Boolean       @default(false)
+  manifest          Json
+  uploadedBlobUrls  Json
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  siteSettings      SiteSettings[]
+
+  @@map("BackgroundPack")
+}
