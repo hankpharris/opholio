@@ -1,5 +1,4 @@
 import { prisma } from "./prisma";
-import { noStore } from "next/cache";
 import { siteSettingsSchema, siteSettingsUpdateSchema } from "./validation";
 import type { Prisma } from "database";
 
@@ -21,7 +20,6 @@ export const DEFAULT_SITE_SETTINGS = {
 
 export async function getSiteSettings() {
     try {
-        noStore();
         const record = await prisma.siteSettings.findUnique({
             where: { id: 1 },
         });
@@ -42,7 +40,6 @@ export async function getSiteSettings() {
 
 export async function getSiteSettingsWithActivePack() {
     try {
-        noStore();
         const record = await prisma.siteSettings.findUnique({
             where: { id: 1 },
             include: { activeBackgroundPack: true },
