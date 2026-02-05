@@ -61,10 +61,10 @@ The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SE
 
 You still must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
 
-1. In GitHub: **Settings -> Developer settings -> OAuth Apps -> New OAuth App**
+1. In GitHub: **Settings -> Developer settings (ottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
 2. Set:
-   - **Homepage URL** = your site URL including protocol (e.g. `https://your-project.vercel.app`)
-   - **Authorization callback URL** = `https://your-project.vercel.app/api/auth/callback/github-vercel`
+   - **Homepage URL** = your site URL including protocol (e.g. `https://your-project.vercel.app`), if posting directly from vercel youll need to manually append "https://"
+   - **Authorization callback URL** = `https://your-project.vercel.app`
 3. Copy **Client ID** into `GITHUB_ID`
 4. Click **Generate a new client secret**, then copy it into `GITHUB_SECRET`
 
@@ -78,8 +78,7 @@ Input manually by dragging your .env from your file explorer to Vercel's input i
 
 or use:
 
-```bash
-npx vercel link
+```bashvf
 yarn vercel:env:push
 ```
 This pushes the auth/public URL env vars from `.env.local` (or `frontend/.env.local`) into your Vercel project (defaults to production).
@@ -112,11 +111,6 @@ yarn install
 yarn workspace database migrate:dev
 ```
 
-Optional seed (creates example projects):
-
-```bash
-yarn workspace database seed
-```
 
 ### 7) Redeploy
 
