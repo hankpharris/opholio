@@ -4,9 +4,10 @@ Opholio is an open source portfolio platform built to serve as a strong but flex
 SPDX-License-Identifier: AGPL-3.0-only
 Copyright (C) 2026 Henry Pharris
 
-## Vercel-first setup workflow (recommended)
+## Setup workflow (recommended)
 
-This program has been configured with a simplified deployment guide
+This program has been configured with a simplified deployment in mind, its been built with "serverless" cloud host Vercel in mind. You'll need accounts on github and vercel, both of which are free with functionality far beyond the scope of this project.
+This version uses yarn as a package manager but I am actively working on an NPM port.
 
 ### 1) Import the repo into Vercel
 
