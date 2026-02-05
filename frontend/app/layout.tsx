@@ -8,6 +8,8 @@ import { getSiteSettingsWithActivePack } from "@/lib/site-settings";
 const inter = Inter({ subsets: ["latin"] });
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com';
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     metadataBase: new URL(baseUrl),
     title: {
