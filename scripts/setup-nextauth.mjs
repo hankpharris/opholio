@@ -41,6 +41,20 @@ function upsertEnvFile(envPath, updates) {
   fs.writeFileSync(envPath, upsertEnvLines(previous, updates), 'utf8');
 }
 
+function resolveRepoRoot() {
+  const cwd = process.cwd();
+  if (fs.existsSync(path.join(cwd, 'frontend'))) {
+    return cwd;
+  }
+  if (path.basename(cwd) === 'frontend') {
+    const parent = path.resolve(cwd, '..');
+    if (fs.existsSync(path.join(parent, 'package.json'))) {
+      return parent;
+    }
+  }
+  return cwd;
+}
+
 async function main() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
@@ -77,11 +91,15 @@ async function main() {
     };
 
     console.log(header('Wrote env vars'));
-    const rootEnvPath = path.join(process.cwd(), '.env.local');
+    const repoRoot = resolveRepoRoot();
+    const rootEnvPath = path.join(repoRoot, '.env.local');
+    const frontendEnvPath = path.join(repoRoot, 'frontend', '.env.local');
 
     upsertEnvFile(rootEnvPath, updates);
+    upsertEnvFile(frontendEnvPath, updates);
 
     console.log(`Updated: ${rootEnvPath}`);
+    console.log(`Updated: ${frontendEnvPath}`);
     console.log('Next step: push these env vars to Vercel (see README).');
 
     console.log(header('GitHub OAuth callback URL'));
