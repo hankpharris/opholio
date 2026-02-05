@@ -86,25 +86,22 @@ async function main() {
       NEXT_PUBLIC_BASE_URL: siteUrl,
       NEXT_PUBLIC_API_URL: siteUrl,
       NEXT_PUBLIC_VERCEL_URL: siteUrl,
-      ...(githubClientId ? { GITHUB_ID: githubClientId, GITHUB_ID_PERSONAL: githubClientId } : {}),
-      ...(githubClientSecret ? { GITHUB_SECRET: githubClientSecret, GITHUB_SECRET_PERSONAL: githubClientSecret } : {}),
+      ...(githubClientId ? { GITHUB_ID: githubClientId } : {}),
+      ...(githubClientSecret ? { GITHUB_SECRET: githubClientSecret } : {}),
     };
 
     console.log(header('Wrote env vars'));
     const repoRoot = resolveRepoRoot();
     const rootEnvPath = path.join(repoRoot, '.env.local');
-    const frontendEnvPath = path.join(repoRoot, 'frontend', '.env.local');
 
     upsertEnvFile(rootEnvPath, updates);
-    upsertEnvFile(frontendEnvPath, updates);
 
     console.log(`Updated: ${rootEnvPath}`);
-    console.log(`Updated: ${frontendEnvPath}`);
     console.log('Next step: push these env vars to Vercel (see README).');
 
-    console.log(header('GitHub OAuth callback URL'));
-    console.log('Set this as the Authorization callback URL on your GitHub OAuth App:');
-    console.log(`${siteUrl}/api/auth/callback/github-vercel`);
+    console.log(header('GitHub OAuth App setup'));
+    console.log('Set both Homepage URL and Authorization callback URL to:');
+    console.log(siteUrl);
   } finally {
     rl.close();
   }

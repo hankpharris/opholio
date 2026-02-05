@@ -35,15 +35,7 @@ npx vercel link
 npx vercel env pull
 ```
 
-This creates/updates a repo-root `.env.local`. Copy it to `frontend/.env.local` so Next.js picks it up:
-
-```sh
-# macOS / Linux
-cp .env.local frontend/.env.local
-
-# Windows (PowerShell)
-Copy-Item .env.local frontend\\.env.local -Force
-```
+This creates/updates a repo-root `.env.local`. Next.js is configured to load env vars from this root file automatically.
 
 ### 4) Configure admin auth (single-user GitHub login)
 
@@ -55,11 +47,10 @@ Fast path (recommended): run the helper to write your local env file:
 yarn setup:nextauth
 ```
 
-The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and updates both:
-- `.env.local`
-- `frontend/.env.local`
+The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and updates:
+- `.env.local` (repo root)
 
-You still must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
+You must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
 
 1. In GitHub: **Settings -> Developer settings (ottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
 2. Set:
@@ -78,54 +69,36 @@ Input manually by dragging your .env from your file explorer to Vercel's input i
 
 or use:
 
-```bashvf
+```bash
 yarn vercel:env:push
 ```
-This pushes the auth/public URL env vars from `.env.local` (or `frontend/.env.local`) into your Vercel project (defaults to production).
+This pushes the auth/public URL env vars from `.env.local` into your Vercel project (defaults to production).
 
 ### 5) Pull env again (after pushing auth/public URL vars)
 
-After you push auth/public URL env vars, pull again so your local files match what Vercel has:
+After you push auth/public URL env vars, pull again so your local files match what Vercel has. This isn't strictly necessary but ensures your local version matches. Helpful for debugging or local development.:
 
 ```bash
 npx vercel env pull
 ```
 
-Then copy it into the Next app folder:
-
-```sh
-# macOS / Linux
-cp .env.local frontend/.env.local
-
-# Windows (PowerShell)
-Copy-Item .env.local frontend\\.env.local -Force
-```
-
 ### 6) Initialize the database schema (Prisma)
 
 The Prisma schema lives at `packages/database/prisma/schema.prisma`.
-Once `DATABASE_URL` is present (from Vercel/Neon), run migrations locally against the provisioned database:
+Once `DATABASE_URL` is present (from Vercel/Neon), push the schema to the database:
 
 ```bash
 yarn install
-yarn workspace database migrate:dev
+yarn workspace database db:push
 ```
 
 
 ### 7) Redeploy
 
-After storage + env vars + migrations are in place, redeploy from Vercel.
+After storage + env vars + migrations are in place, redeploy from Vercel and visit your admin page by apedning your base url with /admin. From here you can login and create your site content!
 
 ## What to do next (based on your current repo-root `.env.local`)
 
-Your current repo-root `.env.local` already has DB/Blob variables, but the Next app reads env from `frontend/.env.local`.
-
-1. Copy/move your repo-root `.env.local` to `frontend/.env.local`.
-2. Run `yarn setup:nextauth` to update `frontend/.env.local`.
-3. Run `yarn vercel:env:push` to push those auth/public URL vars into Vercel.
-4. Pull env again into `frontend/.env.local`.
-5. Run `yarn workspace database migrate:dev`.
-6. Redeploy, then sign in at `/admin` with your GitHub user.
 
 ## Local development (after env is set)
 
@@ -142,7 +115,7 @@ See `.env.example` for a complete list. Minimal required for a fully working dep
 - `DATABASE_URL`
 - `BLOB_READ_WRITE_TOKEN`
 - `NEXTAUTH_URL`, `NEXTAUTH_URL_INTERNAL`, `NEXTAUTH_SECRET`
-- `GITHUB_ID`, `GITHUB_SECRET`, `GITHUB_ID_PERSONAL`, `GITHUB_SECRET_PERSONAL`
+- `GITHUB_ID`, `GITHUB_SECRET`
 - `ALLOWED_GITHUB_USERS`
 - `NEXT_PUBLIC_BASE_URL`
 
