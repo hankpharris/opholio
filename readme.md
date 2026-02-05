@@ -1,15 +1,12 @@
 # ofolio
 
-Single-owner, open-source portfolio with live-configurable content and "Background Packs".
-Packs are uploaded as zip files and rendered behind the site in a sandboxed iframe (client-side only).
-
-Primary hosting target: Vercel (recommended).
-The Next.js app lives in `frontend/`.
+Ofolio, and open source portfolio platform built to serve as a strong but flexible base for development enthusiasts and prgramming noobs alike. 
+SPDX-License-Identifier: AGPL-3.0-only
+Copyright (C) 2026 Henry Pharris
 
 ## Vercel-first setup workflow (recommended)
 
-This workflow is optimized for new users:
-import -> deploy (expected failure) -> attach storage -> pull env -> set auth/public URL vars -> pull env again -> migrate -> redeploy.
+This program has been configured with a simplified deployment guide
 
 ### 1) Import the repo into Vercel
 
@@ -71,19 +68,19 @@ You still must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_
 4. Click **Generate a new client secret**, then copy it into `GITHUB_SECRET`
 
 Notes:
-- You do **not** need to run `yarn add next-auth`. `next-auth` is already a dependency of `frontend/`. Just run `yarn install`.
-- This repo currently expects two GitHub credential pairs. For quickstart, set `GITHUB_ID_PERSONAL`=`GITHUB_ID` and `GITHUB_SECRET_PERSONAL`=`GITHUB_SECRET`.
-- If GitHub shows "Url must be a valid URL", it usually means the URL is missing the `https://` prefix or includes quotes/spaces. A Vercel URL is valid even if the deployment currently shows an error page.
-- Workaround if you are blocked: create the OAuth app using `http://localhost:3000` as both URLs, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live.
-- A failed deployment does not prevent you from using the Vercel URL for the OAuth app. GitHub just requires a syntactically valid URL (must start with `https://` or `http://`).
+- Workaround if you are blocked or deployment fails: create the OAuth app using `http://localhost:3000` as both URLs, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live. Once your site is live on main, make sure to update these urls.
 
-Push your local env vars to Vercel (recommended):
+
+Push your local env vars to Vercel:
+
+Input manually by dragging your .env from your file explorer to Vercel's input in Repo>Settings>Environment Variables
+
+or use:
 
 ```bash
 npx vercel link
 yarn vercel:env:push
 ```
-
 This pushes the auth/public URL env vars from `.env.local` (or `frontend/.env.local`) into your Vercel project (defaults to production).
 
 ### 5) Pull env again (after pushing auth/public URL vars)
