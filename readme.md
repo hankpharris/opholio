@@ -21,8 +21,8 @@ The first deploy is expected to fail until DB/Auth/Blob env vars exist.
 
 1. In Vercel, open your project.
 2. Go to **Storage**:
-   - Add **Postgres** (Vercel Postgres / Neon-backed) to the project.
-   - Add **Blob** to the project.
+   - Add **PostgreSQL via Neon**  to the project.
+   - Add **Blob Storage** to the project.
 
 Vercel will populate Postgres env vars and Blob credentials for the project.
 
