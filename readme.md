@@ -50,7 +50,7 @@ yarn setup:nextauth
 The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and updates:
 - `.env.local` (repo root)
 
-You still must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
+You must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
 
 1. In GitHub: **Settings -> Developer settings (ottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
 2. Set:
@@ -76,7 +76,7 @@ This pushes the auth/public URL env vars from `.env.local` into your Vercel proj
 
 ### 5) Pull env again (after pushing auth/public URL vars)
 
-After you push auth/public URL env vars, pull again so your local files match what Vercel has. This isn't strictly necessary but ensures your local version matches:
+After you push auth/public URL env vars, pull again so your local files match what Vercel has. This isn't strictly necessary but ensures your local version matches. Helpful for debugging or local development.:
 
 ```bash
 npx vercel env pull
@@ -85,26 +85,20 @@ npx vercel env pull
 ### 6) Initialize the database schema (Prisma)
 
 The Prisma schema lives at `packages/database/prisma/schema.prisma`.
-Once `DATABASE_URL` is present (from Vercel/Neon), run migrations locally against the provisioned database:
+Once `DATABASE_URL` is present (from Vercel/Neon), push the schema to the database:
 
 ```bash
 yarn install
-yarn workspace database migrate:dev
+yarn workspace database db:push
 ```
 
 
 ### 7) Redeploy
 
-After storage + env vars + migrations are in place, redeploy from Vercel.
+After storage + env vars + migrations are in place, redeploy from Vercel and visit your admin page by apedning your base url with /admin. From here you can login and create your site content!
 
 ## What to do next (based on your current repo-root `.env.local`)
 
-Your repo-root `.env.local` already has DB/Blob variables. Next.js is configured to load from this file.
-
-1. Run `yarn setup:nextauth` to add auth env vars.
-2. Run `yarn vercel:env:push` to push env vars to Vercel.
-3. Run `yarn workspace database migrate:dev` to initialize the database schema.
-4. Redeploy, then sign in at `/admin` with your GitHub user.
 
 ## Local development (after env is set)
 
