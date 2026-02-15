@@ -58,10 +58,30 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const { settings, activePack } = await getSiteSettingsWithActivePack();
-    const allowedGithubUsername = process.env.ALLOWED_GITHUB_USERS
-        ?.split(",")
-        .map((username) => username.trim())
-        .filter(Boolean)[0];
+    const allowedGithubUsername = (() => {
+        const firstEntry = (process.env.ALLOWED_GITHUB_USERS ?? "")
+            .split(",")
+            .map((value) => value.trim())
+            .find(Boolean);
+
+        if (!firstEntry) return undefined;
+
+        // Accept common formats: hankpharris, "hankpharris", @hankpharris, https://github.com/hankpharris
+        const cleanedEntry = firstEntry
+            .replace(/^['"]|['"]$/g, "")
+            .replace(/^@/, "");
+
+        if (cleanedEntry.startsWith("http://") || cleanedEntry.startsWith("https://")) {
+            const pathSegment = cleanedEntry
+                .replace(/^https?:\/\/(www\.)?github\.com\//i, "")
+                .split("/")
+                .map((value) => value.trim())
+                .find(Boolean);
+            return pathSegment?.replace(/^@/, "");
+        }
+
+        return cleanedEntry;
+    })();
     const githubProfileUrl = allowedGithubUsername
         ? `https://github.com/${allowedGithubUsername}`
         : undefined;
