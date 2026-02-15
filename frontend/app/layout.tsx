@@ -59,7 +59,8 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const { settings, activePack } = await getSiteSettingsWithActivePack();
-    const githubProfileUrl = getGithubProfileUrlFromAllowedUsers(process.env.ALLOWED_GITHUB_USERS);
+    const allowedGithubUsersEnv = process.env["ALLOWED_GITHUB_USERS"];
+    const githubProfileUrl = getGithubProfileUrlFromAllowedUsers(allowedGithubUsersEnv);
     const shouldShowGithubButton = settings.enableGithubButton !== false;
     const structuredData = {
         "@context": "https://schema.org",

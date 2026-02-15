@@ -15,6 +15,13 @@ describe("getGithubProfileUrlFromAllowedUsers", () => {
         assert.equal(getGithubProfileUrlFromAllowedUsers("'hankpharris'"), "https://github.com/hankpharris");
     });
 
+    it("parses assignment-form values", () => {
+        assert.equal(
+            getGithubProfileUrlFromAllowedUsers("ALLOWED_GITHUB_USERS=hankpharris"),
+            "https://github.com/hankpharris"
+        );
+    });
+
     it("parses at-prefixed usernames", () => {
         assert.equal(getGithubProfileUrlFromAllowedUsers("@hankpharris"), "https://github.com/hankpharris");
     });
