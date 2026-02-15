@@ -58,6 +58,16 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const { settings, activePack } = await getSiteSettingsWithActivePack();
+    const allowedGithubUsername = process.env.ALLOWED_GITHUB_USERS
+        ?.split(",")
+        .map((username) => username.trim())
+        .filter(Boolean)[0];
+
+    if (!allowedGithubUsername) {
+        throw new Error("ALLOWED_GITHUB_USERS must include exactly one GitHub username.");
+    }
+
+    const githubProfileUrl = `https://github.com/${allowedGithubUsername}`;
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "Person",
@@ -103,6 +113,8 @@ export default async function RootLayout({
                     logoUrl={settings.logoImageUrl ?? undefined}
                     showChatbot={settings.enableChatbot}
                     showContactForm={settings.enableContactForm}
+                    showGithubButton={settings.enableGithubButton}
+                    githubProfileUrl={githubProfileUrl}
                 />
                 <main className="pt-[88px]">
                     {children}

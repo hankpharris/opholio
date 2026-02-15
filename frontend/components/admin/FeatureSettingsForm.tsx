@@ -6,6 +6,7 @@ interface FeatureSettings {
     enableBackground: boolean;
     enableChatbot: boolean;
     enableContactForm: boolean;
+    enableGithubButton: boolean;
     backgroundQuality: "low" | "med" | "high";
     reducedMotionOverride: boolean | null;
 }
@@ -80,6 +81,14 @@ export function FeatureSettingsForm() {
                         onChange={(event) => updateField("enableContactForm", event.target.checked)}
                     />
                     <span>Enable contact form</span>
+                </label>
+                <label className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        checked={settings.enableGithubButton}
+                        onChange={(event) => updateField("enableGithubButton", event.target.checked)}
+                    />
+                    <span>Enable GitHub button</span>
                 </label>
             </div>
 

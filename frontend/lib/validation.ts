@@ -34,6 +34,7 @@ export const siteSettingsSchema = z.object({
     enableBackground: z.boolean(),
     enableChatbot: z.boolean(),
     enableContactForm: z.boolean(),
+    enableGithubButton: z.boolean(),
     activeBackgroundPackId: z.string().nullable(),
     backgroundConfig: z.record(z.string(), z.unknown()),
     backgroundQuality: BackgroundQualityEnum,

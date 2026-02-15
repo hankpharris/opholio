@@ -1,6 +1,7 @@
 # Opholio
 
 Opholio is an open source portfolio platform built to serve as a strong but flexible base for development enthusiasts and prgramming noobs alike. It makes use of dynamic page and content generation from stuctured database input as well as generous cloud hosting policies to enable a simplified onboarding and usage experience requiring zero coding knowledge or cost overhead. Furthermore it supports dynamic code execution from background "packs" as well as sporting a flexible AGPL-3.0 license to support aesthetic and functional development from intermediate and seasoned developers. 
+
 SPDX-License-Identifier: AGPL-3.0-only
 Copyright (C) 2026 Henry Pharris
 
@@ -85,11 +86,11 @@ npx vercel env pull
 ### 6) Initialize the database schema (Prisma)
 
 The Prisma schema lives at `packages/database/prisma/schema.prisma`.
-Once `DATABASE_URL` is present (from Vercel/Neon), push the schema to the database:
+Once `DATABASE_URL` is present (from Vercel/Neon), run migrations locally against the provisioned database:
 
 ```bash
 yarn install
-yarn workspace database db:push
+yarn workspace database migrate:dev
 ```
 
 
