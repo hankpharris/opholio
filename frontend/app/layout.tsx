@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { getSiteSettingsWithActivePack } from "@/lib/site-settings";
+import { getGithubProfileUrlFromAllowedUsers } from "@/lib/github-profile";
 
 const inter = Inter({ subsets: ["latin"] });
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com';
@@ -58,33 +59,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const { settings, activePack } = await getSiteSettingsWithActivePack();
-    const allowedGithubUsername = (() => {
-        const firstEntry = (process.env.ALLOWED_GITHUB_USERS ?? "")
-            .split(",")
-            .map((value) => value.trim())
-            .find(Boolean);
-
-        if (!firstEntry) return undefined;
-
-        // Accept common formats: hankpharris, "hankpharris", @hankpharris, https://github.com/hankpharris
-        const cleanedEntry = firstEntry
-            .replace(/^['"]|['"]$/g, "")
-            .replace(/^@/, "");
-
-        if (cleanedEntry.startsWith("http://") || cleanedEntry.startsWith("https://")) {
-            const pathSegment = cleanedEntry
-                .replace(/^https?:\/\/(www\.)?github\.com\//i, "")
-                .split("/")
-                .map((value) => value.trim())
-                .find(Boolean);
-            return pathSegment?.replace(/^@/, "");
-        }
-
-        return cleanedEntry;
-    })();
-    const githubProfileUrl = allowedGithubUsername
-        ? `https://github.com/${allowedGithubUsername}`
-        : undefined;
+    const githubProfileUrl = getGithubProfileUrlFromAllowedUsers(process.env.ALLOWED_GITHUB_USERS);
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "Person",
