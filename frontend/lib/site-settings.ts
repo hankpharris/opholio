@@ -7,6 +7,7 @@ export const DEFAULT_SITE_SETTINGS = {
     enableBackground: true,
     enableChatbot: false,
     enableContactForm: false,
+    enableGithubButton: true,
     activeBackgroundPackId: null,
     backgroundConfig: {},
     backgroundQuality: "med",

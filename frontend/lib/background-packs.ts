@@ -72,6 +72,7 @@ export async function setActiveBackgroundPack(id: string | null) {
             enableBackground: true,
             enableChatbot: false,
             enableContactForm: false,
+            enableGithubButton: true,
             backgroundConfig: {},
             backgroundQuality: "med",
             reducedMotionOverride: null,
