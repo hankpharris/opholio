@@ -9,7 +9,7 @@
         "setup:nextauth": "node ./scripts/setup-nextauth.mjs",
         "vercel:env:push": "node ./scripts/vercel-env-push.mjs",
         "fix": "yarn cache clean && yarn install",
-        "test": "yarn run vitest --ui --open=false",
+        "test": "yarn workspace database exec tsx --test ../../frontend/lib/github-profile.test.ts",
         "lint": "turbo run lint",
         "lint:fix": "turbo run lint:fix",
         "generate_sdk": "yarn install && yarn dlx @yarnpkg/sdks base",
@@ -31,7 +31,6 @@
         "@types/cors": "^2",
         "@types/node": "^20.0.0",
         "@types/react-speech-recognition": "^3.9.6",
-        "@vitest/ui": "^3.0.9",
         "@yarnpkg/pnpify": "^4.1.4",
         "eslint": "^9.23.0",
         "eslint-config-custom": "workspace:*",
@@ -41,8 +40,7 @@
         "prisma": "^6.8.2",
         "ts-config-custom": "workspace:*",
         "turbo": "latest",
-        "typescript": "^5.8.2",
-        "vitest": "^3.0.9"
+        "typescript": "^5.8.2"
     },
     "dependencies": {
         "@headlessui/react": "^2.2.4",
@@ -75,8 +73,7 @@
         "husky": "^9.1.7",
         "prettier": "^3.5.3",
         "typescript": "^5.8.2",
-        "eslint": "^9.23.0",
-        "vitest": "^3.0.9"
+        "eslint": "^9.23.0"
     },
     "workspaces": [
         "frontend",
