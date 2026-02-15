@@ -29,7 +29,8 @@ export default async function AdminSystemPage() {
         present: Boolean(process.env[key]),
     }));
     const settings = await getSiteSettings();
-    const resolvedGithubProfileUrl = getGithubProfileUrlFromAllowedUsers(process.env.ALLOWED_GITHUB_USERS);
+    const rawAllowedGithubUsers = process.env["ALLOWED_GITHUB_USERS"] ?? "";
+    const resolvedGithubProfileUrl = getGithubProfileUrlFromAllowedUsers(rawAllowedGithubUsers);
 
     let dbStatus = "unknown";
     try {
@@ -87,6 +88,12 @@ export default async function AdminSystemPage() {
                         <span>Resolved GitHub URL from ALLOWED_GITHUB_USERS</span>
                         <span className={resolvedGithubProfileUrl ? "text-green-600" : "text-red-600"}>
                             {resolvedGithubProfileUrl ?? "not resolved"}
+                        </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span>Raw ALLOWED_GITHUB_USERS (debug)</span>
+                        <span className={rawAllowedGithubUsers ? "text-green-600" : "text-red-600"}>
+                            {rawAllowedGithubUsers || "empty"}
                         </span>
                     </div>
                 </div>
