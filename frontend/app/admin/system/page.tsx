@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { prisma } from "@/lib/prisma";
+import { getSiteSettings } from "@/lib/site-settings";
+import { getGithubProfileUrlFromAllowedUsers } from "@/lib/github-profile";
 
 export default async function AdminSystemPage() {
     const session = await getServerSession(authOptions);
@@ -26,6 +28,8 @@ export default async function AdminSystemPage() {
         key,
         present: Boolean(process.env[key]),
     }));
+    const settings = await getSiteSettings();
+    const resolvedGithubProfileUrl = getGithubProfileUrlFromAllowedUsers(process.env.ALLOWED_GITHUB_USERS);
 
     let dbStatus = "unknown";
     try {
@@ -67,6 +71,24 @@ export default async function AdminSystemPage() {
                             </span>
                         </div>
                     ))}
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-3">Header GitHub runtime debug</h3>
+                <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div className="flex items-center justify-between">
+                        <span>DB setting: enableGithubButton</span>
+                        <span className={settings.enableGithubButton ? "text-green-600" : "text-red-600"}>
+                            {String(settings.enableGithubButton)}
+                        </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span>Resolved GitHub URL from ALLOWED_GITHUB_USERS</span>
+                        <span className={resolvedGithubProfileUrl ? "text-green-600" : "text-red-600"}>
+                            {resolvedGithubProfileUrl ?? "not resolved"}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -60,6 +60,7 @@ export default async function RootLayout({
 }>) {
     const { settings, activePack } = await getSiteSettingsWithActivePack();
     const githubProfileUrl = getGithubProfileUrlFromAllowedUsers(process.env.ALLOWED_GITHUB_USERS);
+    const shouldShowGithubButton = settings.enableGithubButton !== false;
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "Person",
@@ -105,7 +106,7 @@ export default async function RootLayout({
                     logoUrl={settings.logoImageUrl ?? undefined}
                     showChatbot={settings.enableChatbot}
                     showContactForm={settings.enableContactForm}
-                    showGithubButton={settings.enableGithubButton}
+                    showGithubButton={shouldShowGithubButton}
                     githubProfileUrl={githubProfileUrl}
                 />
                 <main className="pt-[88px]">
