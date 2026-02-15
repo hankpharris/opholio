@@ -11,7 +11,7 @@ interface HeaderProps {
     showChatbot?: boolean;
     showContactForm?: boolean;
     showGithubButton?: boolean;
-    githubProfileUrl: string;
+    githubProfileUrl?: string;
 }
 
 export function Header({
@@ -42,7 +42,7 @@ export function Header({
                         <Button href="/projects" variant="nav">
                             Projects
                         </Button>
-                        {showGithubButton && (
+                        {showGithubButton && githubProfileUrl && (
                             <Button href={githubProfileUrl} variant="nav" isExternal>
                                 GitHub
                             </Button>

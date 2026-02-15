@@ -62,12 +62,9 @@ export default async function RootLayout({
         ?.split(",")
         .map((username) => username.trim())
         .filter(Boolean)[0];
-
-    if (!allowedGithubUsername) {
-        throw new Error("ALLOWED_GITHUB_USERS must include exactly one GitHub username.");
-    }
-
-    const githubProfileUrl = `https://github.com/${allowedGithubUsername}`;
+    const githubProfileUrl = allowedGithubUsername
+        ? `https://github.com/${allowedGithubUsername}`
+        : undefined;
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "Person",
