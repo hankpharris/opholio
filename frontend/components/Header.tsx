@@ -10,6 +10,8 @@ interface HeaderProps {
     logoUrl?: string;
     showChatbot?: boolean;
     showContactForm?: boolean;
+    showGithubButton?: boolean;
+    githubProfileUrl: string;
 }
 
 export function Header({
@@ -17,6 +19,8 @@ export function Header({
     logoUrl = "/LogoNoBG.png",
     showChatbot = true,
     showContactForm = true,
+    showGithubButton = true,
+    githubProfileUrl,
 }: HeaderProps) {
     const resolvedLogoUrl = logoUrl || "/LogoNoBG.png";
     return (
@@ -38,9 +42,11 @@ export function Header({
                         <Button href="/projects" variant="nav">
                             Projects
                         </Button>
-                        <Button href="https://github.com/hankpharris" variant="nav" isExternal>
-                            GitHub
-                        </Button>
+                        {showGithubButton && (
+                            <Button href={githubProfileUrl} variant="nav" isExternal>
+                                GitHub
+                            </Button>
+                        )}
                         {showContactForm && <ContactForm />}
                         {showChatbot && <ChatBot />}
                     </div>

@@ -58,6 +58,7 @@ model SiteSettings {
   enableBackground       Boolean  @default(true)
   enableChatbot          Boolean  @default(false)
   enableContactForm      Boolean  @default(false)
+  enableGithubButton     Boolean  @default(true)
   activeBackgroundPackId String?
   backgroundConfig       Json     @default("{}")
   backgroundQuality      String   @default("med")
