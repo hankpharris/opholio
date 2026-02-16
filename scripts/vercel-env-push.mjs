@@ -289,9 +289,10 @@ async function main() {
     'NEXT_PUBLIC_BASE_URL',
     'NEXT_PUBLIC_API_URL',
     'NEXT_PUBLIC_VERCEL_URL',
+    'OPENAI_API_KEY',
   ];
 
-  const sensitiveKeys = new Set(['NEXTAUTH_SECRET', 'GITHUB_SECRET', 'GITHUB_SECRET_PERSONAL']);
+  const sensitiveKeys = new Set(['NEXTAUTH_SECRET', 'GITHUB_SECRET', 'GITHUB_SECRET_PERSONAL', 'OPENAI_API_KEY']);
 
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
