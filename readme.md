@@ -135,3 +135,26 @@ Live-configurable (DB-backed, no redeploy):
 Code-only (build-time):
 - Favicon and some static metadata/icon assets.
 - OAuth app creation/provider wiring (credentials are always env-only).
+
+## Developer Notes
+
+- `.env.local` remains the canonical Vercel-sync file.
+- `yarn vercel:env:push` reads from `.env.local` only and ignores `.env.dev`.
+- `.env.dev` is intentionally separate from `.env.example` to avoid quickstart confusion for quickstart users.
+- `.env.dev` is loaded only in development mode and only if the file exists.
+- `.env.dev` should contain control flags only (not duplicate deploy env values).
+
+### Local auth bypass (optional)
+
+For local troubleshooting, you can bypass GitHub OAuth without changing `.env.local`:
+
+1. Set these in repo-root `.env.dev`:
+   - `ENABLE_DEV_AUTH_BYPASS="1"`
+2. Run `yarn dev`.
+3. Open `/auth/signin`; bypass runs automatically and redirects to `/admin`.
+
+Safety guards:
+- Bypass is only active when `NODE_ENV=development`.
+- Bypass is disabled automatically on Vercel (`VERCEL` is present).
+- When bypass is enabled, local dev forces `NEXTAUTH_URL` and `NEXTAUTH_URL_INTERNAL` to `http://localhost:<PORT>` to avoid redirecting through deployed auth callbacks.
+- `yarn vercel:env:push` does not read `.env.dev`.

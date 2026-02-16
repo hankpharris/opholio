@@ -25,6 +25,7 @@ out
 **/.DS_Store
 **/yarn-error.log*
 .env
+.env.dev
 .env.wpi
 .env.prod
 .env.aws
