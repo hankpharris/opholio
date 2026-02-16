@@ -12,10 +12,25 @@ declare module "next-auth" {
     }
 }
 
+// Security: Dev auth bypass should only be enabled in development environments
+// All conditions must be met to prevent accidental production bypass:
+// 1. NODE_ENV must be "development"
+// 2. Explicit opt-in via ENABLE_DEV_AUTH_BYPASS environment variable
+// 3. Not running on Vercel (VERCEL env var is auto-set by Vercel)
+// Additionally, the authorize function validates these conditions at runtime
 const isDevAuthBypassEnabled =
     process.env.NODE_ENV === "development" &&
     process.env.ENABLE_DEV_AUTH_BYPASS === "1" &&
     !process.env.VERCEL;
+
+// Helper function to validate dev bypass is safe at runtime
+const isDevBypassSafe = (): boolean => {
+    // Re-check all conditions at runtime to prevent module-load-time bypass
+    if (process.env.NODE_ENV !== "development") return false;
+    if (process.env.ENABLE_DEV_AUTH_BYPASS !== "1") return false;
+    if (process.env.VERCEL) return false; // VERCEL is auto-set by Vercel platform
+    return true;
+};
 
 const useSecureCookies = process.env.NODE_ENV !== "development";
 
@@ -32,6 +47,15 @@ export const authOptions: NextAuthOptions = {
                     name: "Dev Bypass (local)",
                     credentials: {},
                     async authorize() {
+                        // Runtime validation: Ensure dev bypass is still safe
+                        // This prevents bypass if environment is misconfigured at runtime
+                        if (!isDevBypassSafe()) {
+                            console.error(
+                                "SECURITY: Dev auth bypass attempted but runtime conditions not met. " +
+                                `NODE_ENV=${process.env.NODE_ENV}, ENABLE_DEV_AUTH_BYPASS=${process.env.ENABLE_DEV_AUTH_BYPASS}, VERCEL=${process.env.VERCEL}`
+                            );
+                            return null;
+                        }
                         return {
                             id: "dev-admin",
                             name: "Local Dev Admin",
@@ -57,7 +81,16 @@ export const authOptions: NextAuthOptions = {
                 return allowedUsers.map(u => u.trim()).includes(githubUser.login);
             }
             if (account?.provider === "dev-bypass") {
-                return isDevAuthBypassEnabled;
+                // Runtime validation: Double-check environment at sign-in time
+                // This provides an additional security layer against misconfiguration
+                const safe = isDevBypassSafe();
+                if (!safe) {
+                    console.error(
+                        "SECURITY: Dev auth bypass sign-in attempted but runtime conditions not met. " +
+                        `NODE_ENV=${process.env.NODE_ENV}, ENABLE_DEV_AUTH_BYPASS=${process.env.ENABLE_DEV_AUTH_BYPASS}, VERCEL=${process.env.VERCEL}`
+                    );
+                }
+                return safe;
             }
             return false;
         },
