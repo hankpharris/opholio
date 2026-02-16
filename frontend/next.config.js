@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'development' && fs.existsSync(devEnvPath)) {
 }
 
 // Keep local auth flows local when dev bypass is enabled.
-if (process.env.NODE_ENV === 'development' && process.env.ENABLE_DEV_AUTH_BYPASS === '1') {
+if (process.env.NODE_ENV === 'development' && process.env.ENABLE_DEV_AUTH_BYPASS === '1' && !process.env.VERCEL) {
     const localUrl = `http://localhost:${process.env.PORT || '3000'}`;
     process.env.NEXTAUTH_URL = localUrl;
     process.env.NEXTAUTH_URL_INTERNAL = localUrl;
