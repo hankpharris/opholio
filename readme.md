@@ -73,7 +73,7 @@ or use:
 ```bash
 yarn vercel:env:push
 ```
-This pushes the auth/public URL env vars from `.env.local` into your Vercel project (defaults to production).
+This pushes the auth/public URL env vars from `.env.local` into your Vercel project (defaults to all environments: production, preview, and development).
 
 ### 5) Pull env again (after pushing auth/public URL vars)
 
