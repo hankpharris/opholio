@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const audio = await openai.audio.speech.create({
       model: "tts-1",
-      voice: "onyx",
+      voice: "nova",
       input: text,
       response_format: "mp3",
     });

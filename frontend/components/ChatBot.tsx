@@ -9,12 +9,15 @@ import { useRouter } from 'next/navigation';
 import { useChatStore } from '../store/chatStore';
 import SpeechRecognitionLib, { useSpeechRecognition } from 'react-speech-recognition';
 
+const OPHOLIO_REPO_URL = 'https://github.com/hankpharris/opholio';
+const LINK_PLACEHOLDER = '{{LINK}}';
+
 const welcomeMessage = {
   id: 'welcome',
   role: 'assistant' as const,
-  content: `Hi! I'm Bueller, an AI assistant for this portfolio site. I was built by Henry Pharris using and OpenAI's GPT 4o-mini and 4o-mini-tts models. I can help you:
+  content: `Hi! I'm Ophelia, an AI assistant for this portfolio site. I was built using OpenAI's GPT 4o-mini and 4o-mini-tts models, and have been included in this portfolio site for free with a template called "Opholio" by Henry Pharris, found ${LINK_PLACEHOLDER}. I can help you:
 
-• Navigate through different sections (About, Projects, Contact, etc)
+• Navigate through different sections (About, Projects, etc)
 • Find specific projects or information
 • Answer questions about the portfolio
 • Guide you to relevant pages
@@ -132,15 +135,15 @@ export function ChatBot() {
     console.log('Is messaging:', isMessaging);
 
     // Handle commands
-    if (lowerTranscript.includes('hey bueller') || lowerTranscript.includes('hi bueller') || lowerTranscript.includes('hello bueller') || lowerTranscript.includes('open bueller')) {
-      console.log('Hey Bueller command detected');
+    if (lowerTranscript.includes('hey ophelia') || lowerTranscript.includes('hi ophelia') || lowerTranscript.includes('hello ophelia') || lowerTranscript.includes('open ophelia')) {
+      console.log('Hey Ophelia command detected');
       setIsOpen(true);
       resetTranscript();
       return;
     }
 
-    if (lowerTranscript.includes('close bueller') || lowerTranscript.includes('goodbye bueller') || lowerTranscript.includes('bye bueller')) {
-      console.log('Close Bueller command detected');
+    if (lowerTranscript.includes('close ophelia') || lowerTranscript.includes('goodbye ophelia') || lowerTranscript.includes('bye ophelia')) {
+      console.log('Close Ophelia command detected');
       setIsOpen(false);
       resetTranscript();
       return;
@@ -182,7 +185,7 @@ export function ChatBot() {
     if (isMessaging) {
       console.log('In messaging mode, updating input');
       const cleanTranscript = lowerTranscript
-        .replace(/hey bueller|close bueller|start message|reset message|send message|send a message|send/gi, '')
+        .replace(/hey ophelia|close ophelia|start message|reset message|send message|send a message|send/gi, '')
         .trim();
       
       if (cleanTranscript) {
@@ -405,8 +408,9 @@ export function ChatBot() {
       const message = customEvent.detail;
       if (message.role === 'assistant') {
         try {
-          console.log('Sending TTS request for:', message.content);
-          const response = await fetch(`/api/chat?text=${encodeURIComponent(message.content)}`);
+          const textForTTS = message.content.replace(LINK_PLACEHOLDER, 'here');
+          console.log('Sending TTS request for:', textForTTS);
+          const response = await fetch(`/api/chat?text=${encodeURIComponent(textForTTS)}`);
 
           if (!response.ok) {
             const errorText = await response.text();
@@ -476,7 +480,7 @@ export function ChatBot() {
         >
           <div className="p-4 border-b border-gray-200/50">
             <div className="flex items-center justify-between">
-              <Dialog.Title className="text-lg font-semibold">Chat with Bueller</Dialog.Title>
+              <Dialog.Title className="text-lg font-semibold">Chat with Ophelia</Dialog.Title>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -525,7 +529,22 @@ export function ChatBot() {
                       : 'bg-white text-gray-700'
                   }`}
                 >
-                  {message.content}
+                  {message.id === 'welcome' ? (
+                    (() => {
+                      const [before, after] = message.content.split(LINK_PLACEHOLDER);
+                      return (
+                        <span className="whitespace-pre-wrap">
+                          {before}
+                          <a href={OPHOLIO_REPO_URL} target="_blank" rel="noopener noreferrer" className="underline text-blue-300 hover:text-blue-200">
+                            here
+                          </a>
+                          {after}
+                        </span>
+                      );
+                    })()
+                  ) : (
+                    message.content
+                  )}
                 </div>
               </div>
             ))}
