@@ -73,7 +73,7 @@ or use:
 ```bash
 yarn vercel:env:push
 ```
-This pushes the auth/public URL env vars from `.env.local` into your Vercel project (defaults to all environments: production, preview, and development).
+This pushes auth, public URL, and optional add-on vars (e.g. `OPENAI_API_KEY`) from `.env.local` into your Vercel project (defaults to all environments: production, preview, and development).
 
 ### 5) Pull env again (after pushing auth/public URL vars)
 
@@ -124,6 +124,46 @@ Optional integrations (can be left unset):
 - `OPENAI_API_KEY` (chatbot/TTS)
 - `RESEND_API_KEY`, `CONTACT_EMAIL` (contact form)
 - `CORS_ALLOWED_ORIGINS` (API CORS allowlist)
+
+## Add-Ons
+
+Optional features that extend the portfolio with additional capabilities.
+
+### Chatbot (OpenAI)
+
+The chatbot provides an AI assistant that helps visitors navigate the site, answer questions about projects, and guide users to relevant pages. It uses OpenAI's GPT models for chat and TTS (text-to-speech) for voice output.
+
+**Prerequisites:** A deployed site with database and admin auth configured. The chatbot is disabled by default and must be enabled in Admin.
+
+**1. Get an OpenAI API key**
+
+1. Go to [platform.openai.com](https://platform.openai.com) and sign in (or create an account).
+2. Navigate to **API keys** (under your profile or [platform.openai.com/api-keys](https://platform.openai.com/api-keys)).
+3. Click **Create new secret key**, name it (e.g. "Opholio"), and copy the key. Store it securely—you won't see it again.
+
+**2. Add the key to your environment**
+
+Add to your repo-root `.env.local`:
+
+```
+OPENAI_API_KEY="sk-..."
+```
+
+**3. Push to Vercel (for deployed sites)**
+
+```bash
+yarn vercel:env:push
+```
+
+The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed). The key is treated as sensitive and is not pushed to the development environment.
+
+**4. Enable the chatbot**
+
+1. Sign in to Admin (`/admin`).
+2. Go to **Feature settings** (or the settings page where feature toggles live).
+3. Enable **Chatbot**.
+
+The chatbot will appear in the navigation. If `OPENAI_API_KEY` is missing, the chat API returns 503 and the chatbot will not function.
 
 ## Live-configurable vs code-only
 
