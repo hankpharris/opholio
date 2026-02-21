@@ -16,7 +16,7 @@ Both **yarn** and **npm** are supported. The examples below show both variants; 
 2. In **Project Settings -> General**, set **Root Directory** to `frontend`.
 3. Click **Deploy**.
 
-The first deploy is expected to fail until DB/Auth/Blob env vars exist.
+The first deploy is may fail until DB/Auth/Blob env vars exist.
 
 ### 2) Attach Postgres (Neon) and Blob to the project
 
@@ -26,6 +26,7 @@ The first deploy is expected to fail until DB/Auth/Blob env vars exist.
    - Add **Blob Storage** to the project.
 
 Vercel will populate Postgres env vars and Blob credentials for the project.
+
 
 ### 3) Pull env vars locally (after adding Postgres + Blob)
 
@@ -57,15 +58,15 @@ The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SE
 
 You must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET`:
 
-1. In GitHub: **Settings -> Developer settings (ottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
+1. In GitHub: **User Settings -> Developer settings (Bottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
 2. Set:
-   - **Homepage URL** = your site URL including protocol (e.g. `https://your-project.vercel.app`), if posting directly from vercel youll need to manually append "https://"
-   - **Authorization callback URL** = `https://your-project.vercel.app/api/auth/callback/github`
+   - **Homepage URL** = your site URL including protocol (e.g. `https://your-project.vercel.app`), if posting directly from vercel youll need to may need to manually append "https://"
+   - **Authorization callback URL** = `https://your-project.vercel.app`
 3. Copy **Client ID** into `GITHUB_ID`
 4. Click **Generate a new client secret**, then copy it into `GITHUB_SECRET`
 
 Notes:
-- Workaround if you are blocked or deployment fails: use `http://localhost:3000` for Homepage URL and `http://localhost:3000/api/auth/callback/github` for callback, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live. Once your site is live on main, make sure to update these urls.
+- Workaround if you are blocked or deployment fails: create the OAuth app using `http://localhost:3000` as both URLs, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live. Once your site is live on main, make sure to update these urls.
 
 
 Push your local env vars to Vercel:
@@ -177,7 +178,7 @@ yarn vercel:env:push
 npm run vercel:env:push
 ```
 
-The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed).
+The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed). The key is treated as sensitive and is not pushed to the development environment.
 
 **4. Enable the chatbot**
 
