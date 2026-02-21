@@ -178,12 +178,7 @@ function extractCreatedRecordId(result) {
   return '';
 }
 
-function getTargetEnvironmentsForKey(environments, isSensitive) {
-  if (!isSensitive) return environments;
-  return environments.filter((environment) => environment !== 'development');
-}
-
-async function upsertEnvVar({ projectId, orgId, token, key, value, environments, sensitive }) {
+async function upsertEnvVar({ projectId, orgId, token, key, value, environments }) {
   const url = buildApiUrl({
     projectId,
     orgId,
@@ -196,7 +191,7 @@ async function upsertEnvVar({ projectId, orgId, token, key, value, environments,
     method: 'POST',
     url,
     body: {
-      type: sensitive ? 'sensitive' : 'encrypted',
+      type: 'encrypted',
       key,
       value,
       target: environments,
@@ -292,8 +287,6 @@ async function main() {
     'OPENAI_API_KEY',
   ];
 
-  const sensitiveKeys = new Set(['NEXTAUTH_SECRET', 'GITHUB_SECRET', 'GITHUB_SECRET_PERSONAL', 'OPENAI_API_KEY']);
-
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
     const envChoice = await rl.question(
@@ -314,14 +307,7 @@ async function main() {
       const value = env.get(key);
       if (!value) continue;
 
-      const isSensitive = sensitiveKeys.has(key);
-      const targetEnvironments = getTargetEnvironmentsForKey(environments, isSensitive);
-
-      if (isSensitive && environments.includes('development')) {
-        console.warn(
-          `Warning: ${key} cannot target development as sensitive; pushing to ${targetEnvironments.join(', ') || '(none)'}.`
-        );
-      }
+      const targetEnvironments = environments;
 
       if (targetEnvironments.length === 0) {
         console.warn(`Skipping ${key}: no supported targets selected.`);
@@ -335,7 +321,6 @@ async function main() {
         key,
         value,
         environments: targetEnvironments,
-        sensitive: isSensitive,
       });
 
       await consolidateEnvVarRecords({
