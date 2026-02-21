@@ -16,7 +16,7 @@
         "build": "turbo run build",
         "setup": "bash ./scripts/setup.sh",
         "deploy": "bash ./scripts/deploy.sh",
-        "prepare": "husky || true",
+        "prepare": "node -e \"if(!process.env.CI&&!process.env.VERCEL){require('child_process').execSync('npx husky',{stdio:'inherit'})}\"",
         "postinstall": "prisma generate --schema=./packages/database/prisma/schema.prisma",
         "setup-db": "yarn workspace database push -- --force-reset && yarn workspace backend init-db",
         "shadcn": "yarn workspace frontend dlx shadcn@latest",
