@@ -100,6 +100,7 @@ export const authOptions: NextAuthOptions = {
             }
             return token;
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async session({ session, token }: { session: any; token: any }) {
             if (session?.user) {
                 session.user.role = token.role as string;

@@ -5,16 +5,17 @@ import { del } from "@vercel/blob";
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getAdminSession();
     if (!session) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     if (body?.action === "activate") {
-        await setActiveBackgroundPack(params.id);
+        await setActiveBackgroundPack(id);
         return NextResponse.json({ success: true });
     }
 
@@ -28,14 +29,15 @@ export async function PATCH(
 
 export async function DELETE(
     _: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getAdminSession();
     if (!session) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const pack = await getBackgroundPack(params.id);
+    const { id } = await params;
+    const pack = await getBackgroundPack(id);
     if (!pack) {
         return new NextResponse("Not found", { status: 404 });
     }
@@ -51,7 +53,7 @@ export async function DELETE(
         blobDeleteError = "Failed to delete one or more blob assets.";
     }
 
-    await deleteBackgroundPack(params.id);
+    await deleteBackgroundPack(id);
 
     return NextResponse.json({
         success: true,

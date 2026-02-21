@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'development' && process.env.ENABLE_DEV_AUTH_BYPASS
 
 const nextConfig = {
     output: 'standalone',
+    outputFileTracingRoot: path.join(__dirname, '..'),
     experimental: {
         externalDir: true,
     },
