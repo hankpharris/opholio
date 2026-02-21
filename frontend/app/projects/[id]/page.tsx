@@ -6,13 +6,12 @@ import { Status } from '@/lib/validation';
 import type { Metadata } from 'next';
 
 interface PageProps {
-    params: {
-        id: string;
-    };
+    params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const project = await getProject(params.id);
+    const { id } = await params;
+    const project = await getProject(id);
     
     if (!project) {
         return {
@@ -25,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: project.name,
         description: project.overviewText || project.description || `View details about ${project.name} project.`,
         alternates: {
-            canonical: `/projects/${params.id}`,
+            canonical: `/projects/${id}`,
         },
         openGraph: {
             title: project.name,
@@ -39,10 +38,11 @@ export const revalidate = 0;
 
 export default async function ProjectPage({ params }: PageProps) {
     try {
-        const project = await getProject(params.id);
+        const { id } = await params;
+        const project = await getProject(id);
 
         if (!project) {
-            console.log('Project not found:', params.id);
+            console.log('Project not found:', id);
             notFound();
         }
 

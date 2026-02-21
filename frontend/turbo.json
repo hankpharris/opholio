@@ -4,7 +4,20 @@
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
-            "outputs": [".next/**", "!.next/cache/**"]
+            "outputs": [".next/**", "!.next/cache/**"],
+            "env": [
+                "BLOB_READ_WRITE_TOKEN",
+                "ENABLE_DEV_AUTH_BYPASS",
+                "VERCEL",
+                "VERCEL_URL",
+                "GITHUB_ID",
+                "GITHUB_SECRET",
+                "ALLOWED_GITHUB_USERS",
+                "CONTACT_EMAIL",
+                "OPENAI_API_KEY",
+                "NEXT_PUBLIC_OPENAI_API_KEY",
+                "DATABASE_URL"
+            ]
         },
         "lint": {},
         "dev": {

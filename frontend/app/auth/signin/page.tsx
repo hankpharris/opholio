@@ -6,13 +6,11 @@ const isDevAuthBypassEnabled =
     !process.env.VERCEL;
 
 type SignInPageProps = {
-    searchParams?: {
-        error?: string;
-    };
+    searchParams: Promise<{ error?: string }>;
 };
 
-export default function SignIn({ searchParams }: SignInPageProps) {
-    const error = searchParams?.error;
+export default async function SignIn({ searchParams }: SignInPageProps) {
+    const { error } = await searchParams;
     const shouldAutoBypass = isDevAuthBypassEnabled && !error;
 
     return (
