@@ -1,20 +1,10 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "globalDependencies": ["**/.env.*local"],
-    "tasks": {
-        "build": {
-            "dependsOn": ["^build"],
-            "outputs": [".next/**", "!.next/cache/**"]
-        },
-        "lint": {},
-        "dev": {
-            "cache": false,
-            "persistent": true
-        }
-    },
     "globalEnv": [
         "OPENAI_API_KEY",
         "DATABASE_URL",
+        "RESEND_API_KEY",
         "NEXT_PUBLIC_OPENAI_API_KEY",
         "NEXT_PUBLIC_DATABASE_URL"
     ],
@@ -56,7 +46,7 @@
                 "NEXT_PUBLIC_OPENAI_API_KEY"
             ],
             "dependsOn": ["^dependencies"],
-            "outputs": ["build/**"]
+            "outputs": ["build/**", ".next/**", "!.next/cache/**"]
         }
     }
 }

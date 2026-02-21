@@ -271,7 +271,7 @@ async function main() {
 
   if (!fs.existsSync(chosenEnvPath)) {
     console.error(`Missing ${rootEnvPath} (and ${envPath})`);
-    console.error('Run `yarn setup:nextauth` (and/or `npx vercel env pull`) first.');
+    console.error('Run `yarn setup:nextauth` / `npm run setup:nextauth` (and/or `npx vercel env pull`) first.');
     process.exit(1);
   }
 

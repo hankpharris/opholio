@@ -8,7 +8,7 @@ Copyright (C) 2026 Henry Pharris
 ## Setup workflow (recommended)
 
 This program has been configured with a simplified deployment in mind, its been built with "serverless" cloud host Vercel in mind. You'll need accounts on github and vercel, both of which are free with functionality far beyond the scope of this project.
-This version uses yarn as a package manager but I am actively working on an NPM port.
+Both **yarn** and **npm** are supported. The examples below show both variants; pick whichever you prefer.
 
 ### 1) Import the repo into Vercel
 
@@ -45,7 +45,11 @@ Admin routes (`/admin`) are protected by NextAuth and restricted to a single Git
 Fast path (recommended): run the helper to write your local env file:
 
 ```bash
+# yarn
 yarn setup:nextauth
+
+# npm
+npm run setup:nextauth
 ```
 
 The script prompts for your site URL and GitHub username, generates `NEXTAUTH_SECRET`, and updates:
@@ -71,7 +75,11 @@ Input manually by dragging your .env from your file explorer to Vercel's input i
 or use:
 
 ```bash
+# yarn
 yarn vercel:env:push
+
+# npm
+npm run vercel:env:push
 ```
 This pushes auth, public URL, and optional add-on vars (e.g. `OPENAI_API_KEY`) from `.env.local` into your Vercel project (defaults to all environments: production, preview, and development).
 
@@ -89,8 +97,13 @@ The Prisma schema lives at `packages/database/prisma/schema.prisma`.
 Once `DATABASE_URL` is present (from Vercel/Neon), run migrations locally against the provisioned database:
 
 ```bash
+# yarn
 yarn install
 yarn workspace database migrate:dev
+
+# npm
+npm install
+npm run -w database migrate:dev
 ```
 
 
@@ -104,8 +117,13 @@ After storage + env vars + migrations are in place, redeploy from Vercel and vis
 ## Local development (after env is set)
 
 ```bash
+# yarn
 yarn install
 yarn dev
+
+# npm
+npm install
+npm run dev
 ```
 
 Default dev URL: `http://localhost:3000`.
@@ -152,7 +170,11 @@ OPENAI_API_KEY="sk-..."
 **3. Push to Vercel (for deployed sites)**
 
 ```bash
+# yarn
 yarn vercel:env:push
+
+# npm
+npm run vercel:env:push
 ```
 
 The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed). The key is treated as sensitive and is not pushed to the development environment.
@@ -179,7 +201,7 @@ Code-only (build-time):
 ## Developer Notes
 
 - `.env.local` remains the canonical Vercel-sync file.
-- `yarn vercel:env:push` reads from `.env.local` only and ignores `.env.dev`.
+- `yarn vercel:env:push` / `npm run vercel:env:push` reads from `.env.local` only and ignores `.env.dev`.
 - `.env.dev` is intentionally separate from `.env.example` to avoid quickstart confusion for quickstart users.
 - `.env.dev` is loaded only in development mode and only if the file exists.
 - `.env.dev` should contain control flags only (not duplicate deploy env values).
@@ -190,11 +212,11 @@ For local troubleshooting, you can bypass GitHub OAuth without changing `.env.lo
 
 1. Set these in repo-root `.env.dev`:
    - `ENABLE_DEV_AUTH_BYPASS="1"`
-2. Run `yarn dev`.
+2. Run `yarn dev` (or `npm run dev`).
 3. Open `/auth/signin`; bypass runs automatically and redirects to `/admin`.
 
 Safety guards:
 - Bypass is only active when `NODE_ENV=development`.
 - Bypass is disabled automatically on Vercel (`VERCEL` is present).
 - When bypass is enabled, local dev forces `NEXTAUTH_URL` and `NEXTAUTH_URL_INTERNAL` to `http://localhost:<PORT>` to avoid redirecting through deployed auth callbacks.
-- `yarn vercel:env:push` does not read `.env.dev`.
+- `yarn vercel:env:push` / `npm run vercel:env:push` does not read `.env.dev`.

@@ -6,8 +6,8 @@
         "shared:tslint": "cd $INIT_CWD && tsc"
     },
     "devDependencies": {
-        "eslint-config-custom": "workspace:*",
-        "prettier-config-custom": "workspace:*",
+        "eslint-config-custom": "*",
+        "prettier-config-custom": "*",
         "typescript": "*"
     }
 }

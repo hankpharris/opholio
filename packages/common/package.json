@@ -5,14 +5,14 @@
     "main": "./src/index.ts",
     "types": "./src/index.ts",
     "scripts": {
-        "lint": "yarn shared:prettier && yarn shared:eslint && yarn shared:tslint",
-        "lint:fix": "yarn shared:prettier:fix && yarn shared:eslint:fix && yarn shared:tslint"
+        "lint": "prettier --cache-location=.prettiercache --check . && eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 && tsc",
+        "lint:fix": "prettier --cache-location=.prettiercache --write . && eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 --fix && tsc"
     },
     "devDependencies": {
         "eslint": "*",
-        "eslint-config-custom": "workspace:*",
+        "eslint-config-custom": "*",
         "prettier": "*",
-        "prettier-config-custom": "workspace:*",
-        "ts-config-custom": "workspace:*"
+        "prettier-config-custom": "*",
+        "ts-config-custom": "*"
     }
 }

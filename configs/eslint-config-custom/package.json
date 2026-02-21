@@ -12,7 +12,7 @@
         "eslint": "*",
         "eslint-config-prettier": "*",
         "eslint-plugin-turbo": "*",
-        "prettier-config-custom": "workspace:*",
+        "prettier-config-custom": "*",
         "turbo": "*",
         "typescript": "*",
         "typescript-eslint": "*"
