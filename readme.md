@@ -177,7 +177,7 @@ yarn vercel:env:push
 npm run vercel:env:push
 ```
 
-The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed). The key is treated as sensitive and is not pushed to the development environment.
+The script will push `OPENAI_API_KEY` along with other env vars. When prompted for environment, choose `all` (or `production`/`preview` as needed).
 
 **4. Enable the chatbot**
 
