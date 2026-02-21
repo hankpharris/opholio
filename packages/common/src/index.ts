@@ -1,2 +1,2 @@
 // Common package exports
-export {}; 
+export {};
