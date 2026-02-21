@@ -1,1 +1,5 @@
-yarn lint:fix
+if [ -f "package-lock.json" ]; then
+  npm run lint:fix
+else
+  yarn lint:fix
+fi

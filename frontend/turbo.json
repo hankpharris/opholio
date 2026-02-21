@@ -1,6 +1,6 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "globalDependencies": ["**/.env.*local"],
+    "extends": ["//"],
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
@@ -9,19 +9,7 @@
         "lint": {},
         "dev": {
             "cache": false,
-            "persistent": true
-        }
-    },
-    "globalEnv": [
-        "OPENAI_API_KEY",
-        "DATABASE_URL",
-        "RESEND_API_KEY",
-        "NEXT_PUBLIC_OPENAI_API_KEY",
-        "NEXT_PUBLIC_DATABASE_URL"
-    ],
-    "extends": ["//"],
-    "tasks": {
-        "dev": {
+            "persistent": true,
             "env": [
                 "FRONTEND_PORT",
                 "BACKEND_PORT",
