@@ -1,16 +1,16 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
+import { config } from "dotenv";
+import { resolve } from "path";
 import { PrismaClient } from "../src/generated/client";
 
 // Load environment variables from root .env file
-config({ path: resolve(__dirname, '../../../.env') });
+config({ path: resolve(__dirname, "../../../.env") });
 
 const client = new PrismaClient();
 
 async function main() {
     console.log("Starting seed...");
     console.log("Database URL:", process.env.DATABASE_URL);
-    
+
     try {
         // First, let's check if we can connect to the database
         await client.$connect();
@@ -84,4 +84,4 @@ main()
     })
     .finally(async () => {
         await client.$disconnect();
-    }); 
+    });

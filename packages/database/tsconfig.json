@@ -1,0 +1,11 @@
+{
+    "extends": "../../configs/ts-config-custom/tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "include": ["src", "prisma"]
+}

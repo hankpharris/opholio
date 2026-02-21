@@ -106,8 +106,8 @@ logs
 Thumbs.db
 .DS_Store
 
-# npm (generated on install; yarn.lock is the tracked lock file)
-package-lock.json
+# Lockfiles (yarn.lock generated on install if using yarn)
+yarn.lock
 
 # vercel
 .vercel

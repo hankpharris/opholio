@@ -9,8 +9,8 @@
         "seed": "tsx prisma/seed.ts"
     },
     "scripts": {
-        "lint": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --check . && dotenv -e ../../.env.local -- eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 && dotenv -e ../../.env.local -- tsc",
-        "lint:fix": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --write . && dotenv -e ../../.env.local -- eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 --fix && dotenv -e ../../.env.local -- tsc",
+        "lint": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --check . && dotenv -e ../../.env.local -- eslint --ignore-pattern src/generated . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 && dotenv -e ../../.env.local -- tsc",
+        "lint:fix": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --write . && dotenv -e ../../.env.local -- eslint --ignore-pattern src/generated . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 --fix && dotenv -e ../../.env.local -- tsc",
         "generate": "dotenv -e ../../.env.local -- prisma generate --schema=./prisma/schema.prisma",
         "migrate:dev": "dotenv -e ../../.env.local -- prisma migrate dev",
         "migrate:reset": "dotenv -e ../../.env.local -- prisma migrate reset",
