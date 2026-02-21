@@ -100,8 +100,10 @@ async function main() {
     console.log('Next step: push these env vars to Vercel (see README).');
 
     console.log(header('GitHub OAuth App setup'));
-    console.log('Set both Homepage URL and Authorization callback URL to:');
+    console.log('Set Homepage URL to:');
     console.log(siteUrl);
+    console.log('Set Authorization callback URL to:');
+    console.log(`${siteUrl}/api/auth/callback/github`);
   } finally {
     rl.close();
   }

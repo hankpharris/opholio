@@ -60,12 +60,12 @@ You must create a GitHub OAuth App once to obtain `GITHUB_ID` and `GITHUB_SECRET
 1. In GitHub: **Settings -> Developer settings (ottom most option, easy to miss) -> OAuth Apps -> New OAuth App**
 2. Set:
    - **Homepage URL** = your site URL including protocol (e.g. `https://your-project.vercel.app`), if posting directly from vercel youll need to manually append "https://"
-   - **Authorization callback URL** = `https://your-project.vercel.app`
+   - **Authorization callback URL** = `https://your-project.vercel.app/api/auth/callback/github`
 3. Copy **Client ID** into `GITHUB_ID`
 4. Click **Generate a new client secret**, then copy it into `GITHUB_SECRET`
 
 Notes:
-- Workaround if you are blocked or deployment fails: create the OAuth app using `http://localhost:3000` as both URLs, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live. Once your site is live on main, make sure to update these urls.
+- Workaround if you are blocked or deployment fails: use `http://localhost:3000` for Homepage URL and `http://localhost:3000/api/auth/callback/github` for callback, grab the Client ID/Secret, then edit the OAuth app later to your Vercel URL once your deployment is live. Once your site is live on main, make sure to update these urls.
 
 
 Push your local env vars to Vercel:
