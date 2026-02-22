@@ -106,6 +106,9 @@ logs
 Thumbs.db
 .DS_Store
 
+# Lockfiles (yarn.lock generated on install if using yarn)
+yarn.lock
+
 # vercel
 .vercel
 .env*.local

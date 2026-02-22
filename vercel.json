@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "corepack enable && corepack prepare yarn@4.9.1 --activate && corepack yarn build",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "corepack enable && corepack prepare yarn@4.9.1 --activate && corepack yarn install --immutable",
+  "installCommand": "npm install",
   "regions": ["iad1"]
 }

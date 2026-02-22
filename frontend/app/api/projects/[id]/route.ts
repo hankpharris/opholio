@@ -18,11 +18,12 @@ export const runtime = 'nodejs';
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const sql = getSql();
-        const id = parseInt(params.id);
+        const { id: rawId } = await params;
+        const id = parseInt(rawId);
         if (isNaN(id)) {
             return NextResponse.json(
                 { error: 'Invalid project ID' },
@@ -77,7 +78,7 @@ export async function GET(
 
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions);
 
@@ -86,8 +87,9 @@ export async function PUT(
     }
 
     try {
+        const { id } = await params;
         const body = await request.json();
-        const updatedProject = await updateProject(parseInt(params.id), body);
+        const updatedProject = await updateProject(parseInt(id), body);
         return NextResponse.json(updatedProject);
     } catch (error) {
         console.error('Error updating project:', error);
@@ -97,7 +99,7 @@ export async function PUT(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions);
 
@@ -106,8 +108,9 @@ export async function DELETE(
     }
 
     try {
+        const { id: rawId } = await params;
         const sql = getSql();
-        const id = parseInt(params.id);
+        const id = parseInt(rawId);
         if (isNaN(id)) {
             return NextResponse.json(
                 { error: 'Invalid project ID' },

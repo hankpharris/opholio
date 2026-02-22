@@ -9,24 +9,24 @@
         "seed": "tsx prisma/seed.ts"
     },
     "scripts": {
-        "lint": "dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:prettier && dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:eslint && dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:tslint",
-        "lint:fix": "dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:prettier:fix && dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:eslint:fix && dotenv -e ${PROJECT_CWD}/.env.local -- yarn shared:tslint",
-        "generate": "dotenv -e ${PROJECT_CWD}/.env.local -- prisma generate --schema=./prisma/schema.prisma",
-        "migrate:dev": "dotenv -e ${PROJECT_CWD}/.env.local -- prisma migrate dev",
-        "migrate:reset": "dotenv -e ${PROJECT_CWD}/.env.local -- prisma migrate reset",
-        "db:push": "dotenv -e ${PROJECT_CWD}/.env.local -- prisma db push",
-        "studio": "dotenv -e ${PROJECT_CWD}/.env.local -- prisma studio",
+        "lint": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --check . && dotenv -e ../../.env.local -- eslint --ignore-pattern src/generated . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 && dotenv -e ../../.env.local -- tsc",
+        "lint:fix": "dotenv -e ../../.env.local -- prettier --cache-location=.prettiercache --write . && dotenv -e ../../.env.local -- eslint --ignore-pattern src/generated . --report-unused-disable-directives --no-error-on-unmatched-pattern --max-warnings 0 --fix && dotenv -e ../../.env.local -- tsc",
+        "generate": "dotenv -e ../../.env.local -- prisma generate --schema=./prisma/schema.prisma",
+        "migrate:dev": "dotenv -e ../../.env.local -- prisma migrate dev",
+        "migrate:reset": "dotenv -e ../../.env.local -- prisma migrate reset",
+        "db:push": "dotenv -e ../../.env.local -- prisma db push",
+        "studio": "dotenv -e ../../.env.local -- prisma studio",
         "test-db": "yarn generate && tsx prisma/test-db.ts",
-        "seed": "dotenv -e ${PROJECT_CWD}/.env.local -- tsx prisma/seed.ts"
+        "seed": "dotenv -e ../../.env.local -- tsx prisma/seed.ts"
     },
     "devDependencies": {
         "@yarnpkg/pnpify": "^4.0.0-rc.45",
         "eslint": "*",
-        "eslint-config-custom": "workspace:*",
+        "eslint-config-custom": "*",
         "prettier": "*",
-        "prettier-config-custom": "workspace:*",
+        "prettier-config-custom": "*",
         "prisma": "^6.8.2",
-        "ts-config-custom": "workspace:*",
+        "ts-config-custom": "*",
         "tsx": "^4.7.1"
     },
     "dependencies": {

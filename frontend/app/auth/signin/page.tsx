@@ -1,4 +1,5 @@
 import { AutoDevBypass } from "./AutoDevBypass";
+import { GitHubSignInButton } from "./GitHubSignInButton";
 
 const isDevAuthBypassEnabled =
     process.env.NODE_ENV === "development" &&
@@ -6,13 +7,11 @@ const isDevAuthBypassEnabled =
     !process.env.VERCEL;
 
 type SignInPageProps = {
-    searchParams?: {
-        error?: string;
-    };
+    searchParams: Promise<{ error?: string }>;
 };
 
-export default function SignIn({ searchParams }: SignInPageProps) {
-    const error = searchParams?.error;
+export default async function SignIn({ searchParams }: SignInPageProps) {
+    const { error } = await searchParams;
     const shouldAutoBypass = isDevAuthBypassEnabled && !error;
 
     return (
@@ -31,12 +30,7 @@ export default function SignIn({ searchParams }: SignInPageProps) {
                         </div>
                     )}
 
-                    <a
-                        href="/api/auth/signin/github?callbackUrl=%2Fadmin"
-                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
-                        Sign in with GitHub
-                    </a>
+                    <GitHubSignInButton />
                 </div>
             </div>
         </div>
