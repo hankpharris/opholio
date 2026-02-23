@@ -1,8 +1,8 @@
 {
-    "buildCommand": "npm run build",
+    "buildCommand": "yarn build",
     "outputDirectory": ".next",
     "framework": "nextjs",
-    "installCommand": "npm install",
+    "installCommand": "yarn install",
     "github": {
         "silent": true
     },

@@ -10,7 +10,21 @@ Copyright (C) 2026 Henry Pharris
 This program has been configured with a simplified deployment in mind, its been built with "serverless" cloud host Vercel in mind. You'll need accounts on github and vercel, both of which are free with functionality far beyond the scope of this project.
 Both **yarn** and **npm** are supported. The examples below show both variants; pick whichever you prefer.
 
-### 1) Import the repo into Vercel
+### 1) Choose a package manager (required once per branch/repo)
+
+Run one of the commands below before deploy. This keeps `packageManager` and Vercel build/install commands aligned, runs the matching install command automatically, and removes the opposite lockfile.
+
+```bash
+# choose npm
+node ./scripts/configure-package-manager.mjs npm
+
+# choose yarn
+node ./scripts/configure-package-manager.mjs yarn
+```
+
+Then continue using that same manager and commit the matching lockfile (`package-lock.json` for npm, `yarn.lock` for yarn).
+
+### 2) Import the repo into Vercel
 
 1. Create a new Vercel Project from this repo.
 2. In **Project Settings -> General**, set **Root Directory** to `frontend`.
@@ -18,7 +32,7 @@ Both **yarn** and **npm** are supported. The examples below show both variants; 
 
 The first deploy is may fail until DB/Auth/Blob env vars exist.
 
-### 2) Attach Postgres (Neon) and Blob to the project
+### 3) Attach Postgres (Neon) and Blob to the project
 
 1. In Vercel, open your project.
 2. Go to **Storage**:
@@ -28,7 +42,7 @@ The first deploy is may fail until DB/Auth/Blob env vars exist.
 Vercel will populate Postgres env vars and Blob credentials for the project.
 
 
-### 3) Pull env vars locally (after adding Postgres + Blob)
+### 4) Pull env vars locally (after adding Postgres + Blob)
 
 After storage is attached, pull env so you get DB + Blob variables locally:
 
@@ -39,7 +53,7 @@ npx vercel env pull
 
 This creates/updates a repo-root `.env.local`. Next.js is configured to load env vars from this root file automatically.
 
-### 4) Configure admin auth (single-user GitHub login)
+### 5) Configure admin auth (single-user GitHub login)
 
 Admin routes (`/admin`) are protected by NextAuth and restricted to a single GitHub username.
 
@@ -84,7 +98,7 @@ npm run vercel:env:push
 ```
 This pushes auth, public URL, and optional add-on vars (e.g. `OPENAI_API_KEY`) from `.env.local` into your Vercel project (defaults to all environments: production, preview, and development).
 
-### 5) Pull env again (after pushing auth/public URL vars)
+### 6) Pull env again (after pushing auth/public URL vars)
 
 After you push auth/public URL env vars, pull again so your local files match what Vercel has. This isn't strictly necessary but ensures your local version matches. Helpful for debugging or local development.:
 
@@ -92,23 +106,21 @@ After you push auth/public URL env vars, pull again so your local files match wh
 npx vercel env pull
 ```
 
-### 6) Initialize the database schema (Prisma)
+### 7) Initialize the database schema (Prisma)
 
 The Prisma schema lives at `packages/database/prisma/schema.prisma`.
 Once `DATABASE_URL` is present (from Vercel/Neon), run migrations locally against the provisioned database:
 
 ```bash
 # yarn
-yarn install
 yarn workspace database migrate:dev
 
 # npm
-npm install
 npm run -w database migrate:dev
 ```
 
 
-### 7) Redeploy
+### 8) Redeploy
 
 After storage + env vars + migrations are in place, redeploy from Vercel and visit your admin page by apedning your base url with /admin. From here you can login and create your site content!
 
@@ -119,11 +131,9 @@ After storage + env vars + migrations are in place, redeploy from Vercel and vis
 
 ```bash
 # yarn
-yarn install
 yarn dev
 
 # npm
-npm install
 npm run dev
 ```
 
@@ -206,6 +216,17 @@ Code-only (build-time):
 - `.env.dev` is intentionally separate from `.env.example` to avoid quickstart confusion for quickstart users.
 - `.env.dev` is loaded only in development mode and only if the file exists.
 - `.env.dev` should contain control flags only (not duplicate deploy env values).
+
+### Package Manager States
+
+- Normal development workflow: run one of these once, then develop/commit/push normally.
+  - `node ./scripts/configure-package-manager.mjs npm`
+  - `node ./scripts/configure-package-manager.mjs yarn`
+- These configure commands set `packageManager`, update both Vercel config files, run install, and keep only the selected manager lockfile.
+- Distributable/agnostic reset (maintainers, before publishing a template state):
+  - `node ./scripts/reset-package-manager-config.mjs`
+  - `node ./scripts/assert-package-manager-state.mjs agnostic`
+- The agnostic reset removes `packageManager`, removes both lockfiles, and sets Vercel build/install to a guard command that instructs users to run `configure-package-manager` first.
 
 ### Local auth bypass (optional)
 

@@ -36,7 +36,6 @@ out
 !.yarn/releases/
 !.yarn/sdks/
 !.yarn/versions/
-.yarnrc.yml
 .pnp.*
 .pnp.loader.cjs
 .pnp.loader.mjs
@@ -106,8 +105,7 @@ logs
 Thumbs.db
 .DS_Store
 
-# Lockfiles (yarn.lock generated on install if using yarn)
-yarn.lock
+# Lockfiles are tracked based on the selected package manager workflow.
 
 # vercel
 .vercel
