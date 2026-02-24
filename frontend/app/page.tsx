@@ -13,6 +13,7 @@ export default async function Home() {
                     tagline={settings.tagline}
                     aboutContent={settings.aboutContent}
                     avatarImageUrl={settings.avatarImageUrl}
+                    avatarShape={settings.avatarShape}
                 />
             </div>
         </div>

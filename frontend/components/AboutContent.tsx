@@ -3,6 +3,7 @@ interface AboutContentProps {
     tagline?: string;
     aboutContent?: string;
     avatarImageUrl?: string | null;
+    avatarShape?: "circle" | "square";
 }
 
 export function AboutContent({
@@ -10,11 +11,13 @@ export function AboutContent({
     tagline,
     aboutContent = "",
     avatarImageUrl,
+    avatarShape = "circle",
 }: AboutContentProps) {
     const paragraphs = aboutContent
         .split("\n")
         .map((line) => line.trim())
         .filter(Boolean);
+    const avatarShapeClass = avatarShape === "square" ? "rounded-lg" : "rounded-full";
 
     return (
         <div className="container max-w-3xl mx-auto px-8 py-12 bg-white/30 rounded-xl shadow-2xl backdrop-blur-md border border-white/25 relative z-10">
@@ -24,7 +27,7 @@ export function AboutContent({
                 <img
                     src={avatarImageUrl || "/opholio-mark.png"}
                     alt="Avatar"
-                    className="w-64 h-64 rounded-full object-cover"
+                    className={`w-64 h-64 object-cover ${avatarShapeClass}`}
                 />
             </div>
             <div className="text-lg text-gray-800 leading-relaxed space-y-4">

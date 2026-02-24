@@ -28,6 +28,7 @@ export const projectIdSchema = z.string().regex(/^\d+$/).transform(Number);
 export type Project = z.infer<typeof projectSchema>;
 
 export const BackgroundQualityEnum = z.enum(['low', 'med', 'high']);
+export const AvatarShapeEnum = z.enum(['circle', 'square']);
 
 export const siteSettingsSchema = z.object({
     id: z.number().int().positive(),
@@ -39,6 +40,7 @@ export const siteSettingsSchema = z.object({
     backgroundConfig: z.record(z.string(), z.unknown()),
     backgroundQuality: BackgroundQualityEnum,
     reducedMotionOverride: z.boolean().nullable(),
+    avatarShape: AvatarShapeEnum,
     siteTitle: z.string(),
     tagline: z.string(),
     aboutContent: z.string(),

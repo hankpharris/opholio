@@ -26,8 +26,9 @@ export default async function AboutMe() {
                     tagline={settings.tagline}
                     aboutContent={settings.aboutContent}
                     avatarImageUrl={settings.avatarImageUrl}
+                    avatarShape={settings.avatarShape}
                 />
             </div>
         </div>
     );
-} 
+}

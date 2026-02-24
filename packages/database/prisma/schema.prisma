@@ -63,6 +63,7 @@ model SiteSettings {
   backgroundConfig       Json     @default("{}")
   backgroundQuality      String   @default("med")
   reducedMotionOverride  Boolean?
+  avatarShape            String   @default("circle")
   siteTitle              String   @default("Portfolio")
   tagline                String   @default("")
   aboutContent           String   @default("")
