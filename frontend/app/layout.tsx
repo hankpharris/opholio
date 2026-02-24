@@ -5,32 +5,32 @@ import { Header } from "@/components/Header";
 import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { getSiteSettingsWithActivePack } from "@/lib/site-settings";
 import { getGithubProfileUrlFromAllowedUsers } from "@/lib/github-profile";
+import { DEFAULT_KEYWORDS, DEFAULT_SITE_DESCRIPTION, DEFAULT_SITE_NAME, getBaseUrl } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"] });
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com';
+const baseUrl = getBaseUrl();
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     metadataBase: new URL(baseUrl),
     title: {
-        default: "Henry Pharris - Robotics, Software, and AI Engineer",
-        template: "%s | Henry Pharris - Robotics, Software, and AI Engineer",
+        default: DEFAULT_SITE_NAME,
+        template: `%s | ${DEFAULT_SITE_NAME}`,
     },
-    description: "Henry Pharris is a robotics engineering student at Worcester Polytechnic Institute, based in Midcoast Maine. Specializing in robotics, computer science, and software development. View my projects and get in touch.",
-    keywords: ["Henry Pharris", "portfolio", "robotics engineering", "computer science", "music", "projects", "developer", "WPI", "Worcester Polytechnic Institute", "software engineer", "robotics engineer", "software engineer midcoast maine", "software engineer maine", "developer midcoast", "robotics engineer maine", "WPI graduate maine"],
-    authors: [{ name: "Henry Pharris" }],
-    creator: "Henry Pharris",
-    publisher: "Henry Pharris",
+    description: DEFAULT_SITE_DESCRIPTION,
+    keywords: [...DEFAULT_KEYWORDS],
+    creator: "Opholio",
+    publisher: "Opholio",
     icons: {
         icon: [
-            { url: '/Logo(Resized).png', sizes: '500x500', type: 'image/png' },
+            { url: "/Logo(Resized).png", sizes: "500x500", type: "image/png" },
         ],
-        shortcut: '/Logo(Resized).png',
-        apple: '/Logo(Resized).png',
+        shortcut: "/Logo(Resized).png",
+        apple: "/Logo(Resized).png",
     },
     alternates: {
-        canonical: '/',
+        canonical: "/",
     },
     robots: {
         index: true,
@@ -38,18 +38,18 @@ export const metadata: Metadata = {
         googleBot: {
             index: true,
             follow: true,
-            'max-video-preview': -1,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
         },
     },
     openGraph: {
-        type: 'website',
-        locale: 'en_US',
+        type: "website",
+        locale: "en_US",
         url: baseUrl,
-        title: "Henry Pharris - Robotics, Software, and AI Engineer",
-        description: "Henry Pharris is a software engineer and robotics engineering student at Worcester Polytechnic Institute, based in Midcoast Maine. Specializing in robotics, computer science, and software development. View my projects and get in touch.",
-        siteName: "Henry Pharris - Robotics, Software, and AI Engineer",
+        title: DEFAULT_SITE_NAME,
+        description: DEFAULT_SITE_DESCRIPTION,
+        siteName: DEFAULT_SITE_NAME,
     },
 };
 
@@ -64,23 +64,10 @@ export default async function RootLayout({
     const shouldShowGithubButton = settings.enableGithubButton !== false;
     const structuredData = {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Henry Pharris",
-        "jobTitle": "Robotics, Software, and AI Engineer",
-        "alumniOf": {
-            "@type": "CollegeOrUniversity",
-            "name": "Worcester Polytechnic Institute"
-        },
-        "knowsAbout": ["Robotics Engineering", "Computer Science", "Software Development"],
-        "address": {
-            "@type": "PostalAddress",
-            "addressRegion": "Maine",
-            "addressCountry": "US"
-        },
+        "@type": "WebSite",
+        "name": settings.siteTitle || DEFAULT_SITE_NAME,
+        "description": settings.tagline || DEFAULT_SITE_DESCRIPTION,
         "url": baseUrl,
-        "sameAs": [
-            // Add your LinkedIn, GitHub, etc. here
-        ]
     };
 
     return (

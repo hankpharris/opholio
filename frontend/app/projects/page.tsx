@@ -5,13 +5,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: "Projects",
-    description: "Explore my portfolio of projects in robotics engineering, computer science, and software development.",
+    description: "Browse portfolio projects and case studies managed through Opholio, an open source platform for showcasing technical work.",
     alternates: {
         canonical: '/projects',
     },
     openGraph: {
         title: "Projects",
-        description: "Explore my portfolio of projects in robotics engineering, computer science, and software development.",
+        description: "Browse portfolio projects and case studies managed through Opholio, an open source platform for showcasing technical work.",
     },
 };
 

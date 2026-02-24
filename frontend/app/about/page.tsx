@@ -5,14 +5,14 @@ import { getSiteSettings } from "@/lib/site-settings";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "About Me",
-    description: "Learn more about Henry Pharris, as well as the services and skills he offers; a senior at Worcester Polytechnic Institute studying Robotics Engineering with minors in Computer Science and Music.",
+    title: "About",
+    description: "Learn about this portfolio site built with Opholio, an open source platform for customizable profile, project, and content pages.",
     alternates: {
         canonical: '/about',
     },
     openGraph: {
-        title: "About Me",
-        description: "Learn more about Henry Pharris, as well as the services and skills he offers; a senior at Worcester Polytechnic Institute studying Robotics Engineering with minors in Computer Science and Music.",
+        title: "About",
+        description: "Learn about this portfolio site built with Opholio, an open source platform for customizable profile, project, and content pages.",
     },
 };
 
