@@ -5,6 +5,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 interface BackgroundLayerProps {
     enabled: boolean;
+    packId: string | null;
     entryUrl: string | null;
     interactive: boolean;
     config: Record<string, unknown>;
@@ -14,6 +15,7 @@ interface BackgroundLayerProps {
 
 export function BackgroundLayer({
     enabled,
+    packId,
     entryUrl,
     interactive,
     config,
@@ -24,7 +26,10 @@ export function BackgroundLayer({
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
     const iframeSrc = useMemo(() => {
-        if (!entryUrl) return null;
+        const baseUrl = packId
+            ? `/api/background-packs/frame/${encodeURIComponent(packId)}`
+            : entryUrl;
+        if (!baseUrl) return null;
         const params = new URLSearchParams();
         params.set("quality", quality);
         const reducedMotion =
@@ -35,9 +40,9 @@ export function BackgroundLayer({
                 params.set(key, String(value));
             }
         });
-        const separator = entryUrl.includes("?") ? "&" : "?";
-        return `${entryUrl}${params.toString() ? `${separator}${params.toString()}` : ""}`;
-    }, [entryUrl, config, quality, reducedMotionOverride, prefersReducedMotion]);
+        const separator = baseUrl.includes("?") ? "&" : "?";
+        return `${baseUrl}${params.toString() ? `${separator}${params.toString()}` : ""}`;
+    }, [packId, entryUrl, config, quality, reducedMotionOverride, prefersReducedMotion]);
 
     useEffect(() => {
         if (!iframeRef.current) return;
@@ -69,6 +74,39 @@ export function BackgroundLayer({
     }, [config]);
 
     useEffect(() => {
+        if (!interactive) return;
+
+        const postPointer = (active: boolean, x?: number, y?: number) => {
+            const frame = iframeRef.current;
+            if (!frame?.contentWindow) return;
+            frame.contentWindow.postMessage(
+                { type: "POINTER", active, x: x ?? null, y: y ?? null },
+                "*"
+            );
+        };
+
+        const handlePointerMove = (event: PointerEvent) => {
+            postPointer(true, event.clientX, event.clientY);
+        };
+
+        const handlePointerLeave = () => {
+            postPointer(false);
+        };
+
+        window.addEventListener("pointermove", handlePointerMove, { passive: true });
+        window.addEventListener("pointerdown", handlePointerMove, { passive: true });
+        window.addEventListener("pointerleave", handlePointerLeave);
+        window.addEventListener("blur", handlePointerLeave);
+
+        return () => {
+            window.removeEventListener("pointermove", handlePointerMove);
+            window.removeEventListener("pointerdown", handlePointerMove);
+            window.removeEventListener("pointerleave", handlePointerLeave);
+            window.removeEventListener("blur", handlePointerLeave);
+        };
+    }, [interactive, iframeSrc]);
+
+    useEffect(() => {
         const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
         const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
         handleChange();
@@ -81,7 +119,7 @@ export function BackgroundLayer({
     }
 
     return (
-        <div className="fixed inset-0 -z-10">
+        <div className="fixed inset-0 z-0">
             <iframe
                 ref={iframeRef}
                 src={iframeSrc}

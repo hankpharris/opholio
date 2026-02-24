@@ -1,0 +1,63 @@
+{
+  "name": "Orbit Trails",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "interactive": true,
+  "allowExternal": false,
+  "controls": [
+    {
+      "key": "particleCount",
+      "type": "number",
+      "label": "Particle Count",
+      "default": 90,
+      "min": 20,
+      "max": 220,
+      "step": 5
+    },
+    {
+      "key": "maxSpeed",
+      "type": "number",
+      "label": "Max Speed",
+      "default": 6,
+      "min": 0.2,
+      "max": 6,
+      "step": 0.1
+    },
+    {
+      "key": "minSpeed",
+      "type": "number",
+      "label": "Min Speed",
+      "default": 1.5,
+      "min": 0,
+      "max": 3,
+      "step": 0.05
+    },
+    {
+      "key": "trail",
+      "type": "toggle",
+      "label": "Motion Trails",
+      "default": true
+    },
+    {
+      "key": "trailFade",
+      "type": "number",
+      "label": "Trail Fade",
+      "default": 0.5,
+      "min": 0.05,
+      "max": 0.9,
+      "step": 0.01
+    },
+    {
+      "key": "accentColor",
+      "type": "color",
+      "label": "Accent Color",
+      "default": "#7ef9ff"
+    },
+    {
+      "key": "label",
+      "type": "text",
+      "label": "Badge Label",
+      "default": "Move your cursor"
+    }
+  ]
+}

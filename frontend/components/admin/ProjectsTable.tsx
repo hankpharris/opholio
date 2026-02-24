@@ -238,10 +238,10 @@ export function ProjectsTable({ initialProjects }: ProjectsTableProps) {
                     </div>
                 )}
             </div>
-            <div className="overflow-x-auto">
-                <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="overflow-x-auto rounded-xl">
+                <table className="min-w-full bg-white/25 backdrop-blur-md border border-white/20 rounded-xl shadow">
                     <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-700">
+                        <tr className="bg-white/35">
                             <th className="px-4 py-2">ID</th>
                             <th className="px-4 py-2">Name</th>
                             <th className="px-4 py-2">Status</th>

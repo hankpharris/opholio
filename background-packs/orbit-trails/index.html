@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orbit Trails</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 20% 20%, #102030 0%, #04070f 55%, #010204 100%);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    #scene {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #badge {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      color: #dbeafe;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 9999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      user-select: none;
+      backdrop-filter: blur(5px);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div id="badge"></div>
+  <script>
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d");
+    const badge = document.getElementById("badge");
+
+    const qualityScale = { low: 0.65, med: 1, high: 1.45 };
+    const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
+
+    const state = {
+      quality: "med",
+      reducedMotion: false,
+      particleCount: 90,
+      maxSpeed: 6,
+      minSpeed: 1.5,
+      trail: true,
+      trailFade: 0.5,
+      accentColor: "#7ef9ff",
+      label: "Move your cursor"
+    };
+
+    let viewport = {
+      w: window.innerWidth,
+      h: window.innerHeight,
+      dpr: window.devicePixelRatio || 1
+    };
+    let particles = [];
+    let time = 0;
+
+    function parseNumber(value, fallback) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function parseBoolean(value, fallback) {
+      if (value === "true" || value === true) return true;
+      if (value === "false" || value === false) return false;
+      return fallback;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function wrapDelta(delta, size) {
+      if (delta > size * 0.5) return delta - size;
+      if (delta < -size * 0.5) return delta + size;
+      return delta;
+    }
+
+    function createParticle(x, y) {
+      const speed = 0.2 + Math.random() * 1.2;
+      const angle = Math.random() * Math.PI * 2;
+      return {
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r: 0.7 + Math.random() * 2.2,
+        seed: Math.random() * Math.PI * 2,
+        spin: Math.random() < 0.5 ? -1 : 1,
+        homeX: Math.random() * viewport.w,
+        homeY: Math.random() * viewport.h,
+        drift: 55 + Math.random() * 130
+      };
+    }
+
+    function applyForces(particle) {
+      const flowScale = 0.0055;
+      const flowAngle =
+        Math.sin(particle.x * flowScale + time * 0.7 + particle.seed) * 2.0 +
+        Math.cos(particle.y * flowScale - time * 0.55 - particle.seed * 1.4) * 2.0;
+      particle.vx += Math.cos(flowAngle) * 0.018;
+      particle.vy += Math.sin(flowAngle) * 0.018;
+
+      const homeX =
+        (particle.homeX + Math.cos(time * 0.24 + particle.seed) * particle.drift + viewport.w) %
+        viewport.w;
+      const homeY =
+        (particle.homeY + Math.sin(time * 0.28 + particle.seed * 1.7) * particle.drift + viewport.h) %
+        viewport.h;
+      const homeDx = wrapDelta(homeX - particle.x, viewport.w);
+      const homeDy = wrapDelta(homeY - particle.y, viewport.h);
+      particle.vx += homeDx * 0.0009;
+      particle.vy += homeDy * 0.0009;
+
+      if (pointer.active) {
+        const dx = pointer.x - particle.x;
+        const dy = pointer.y - particle.y;
+        const dist = Math.hypot(dx, dy) + 1e-6;
+        const influence = clamp(1 - dist / 320, 0, 1);
+        if (influence > 0) {
+          particle.vx += dx * 0.0009 * influence;
+          particle.vy += dy * 0.0009 * influence;
+
+          const tangent = 0.055 * influence;
+          particle.vx += (-dy / dist) * tangent * particle.spin;
+          particle.vy += (dx / dist) * tangent * particle.spin;
+
+          const core = 26;
+          if (dist < core) {
+            const push = ((core - dist) / core) * 0.22;
+            particle.vx -= (dx / dist) * push;
+            particle.vy -= (dy / dist) * push;
+          }
+        }
+      }
+    }
+
+    function getSpeedLimits() {
+      const min = clamp(parseNumber(state.minSpeed, 0), 0, 3);
+      const max = clamp(parseNumber(state.maxSpeed, 1.8), Math.max(0.05, min + 0.05), 6);
+      return { min, max };
+    }
+
+    function enforceSpeedLimits(particle) {
+      const speedSq = particle.vx * particle.vx + particle.vy * particle.vy;
+      const { min, max } = getSpeedLimits();
+
+      if (speedSq <= 1e-8) {
+        if (min > 0) {
+          const angle = Math.random() * Math.PI * 2;
+          particle.vx = Math.cos(angle) * min;
+          particle.vy = Math.sin(angle) * min;
+        }
+        return;
+      }
+
+      const speed = Math.sqrt(speedSq);
+      if (speed > max) {
+        const factor = max / speed;
+        particle.vx *= factor;
+        particle.vy *= factor;
+        return;
+      }
+
+      if (speed < min) {
+        const factor = min / speed;
+        particle.vx *= factor;
+        particle.vy *= factor;
+      }
+    }
+
+    function applyParams(search) {
+      const params = new URLSearchParams(search);
+      state.quality = params.get("quality") || state.quality;
+      state.reducedMotion = parseBoolean(params.get("reducedMotion"), state.reducedMotion);
+      state.particleCount = clamp(parseNumber(params.get("particleCount"), state.particleCount), 20, 220);
+      state.maxSpeed = clamp(parseNumber(params.get("maxSpeed"), state.maxSpeed), 0.2, 6);
+      state.minSpeed = clamp(parseNumber(params.get("minSpeed"), state.minSpeed), 0, 3);
+      state.trail = parseBoolean(params.get("trail"), state.trail);
+      state.trailFade = clamp(parseNumber(params.get("trailFade"), state.trailFade), 0.05, 0.9);
+      state.accentColor = params.get("accentColor") || state.accentColor;
+      state.label = params.get("label") || state.label;
+    }
+
+    function setViewport(w, h, dpr) {
+      viewport.w = w || viewport.w;
+      viewport.h = h || viewport.h;
+      viewport.dpr = dpr || viewport.dpr || 1;
+      canvas.width = Math.floor(viewport.w * viewport.dpr);
+      canvas.height = Math.floor(viewport.h * viewport.dpr);
+      canvas.style.width = viewport.w + "px";
+      canvas.style.height = viewport.h + "px";
+      ctx.setTransform(viewport.dpr, 0, 0, viewport.dpr, 0, 0);
+    }
+
+    function targetCount() {
+      const scale = qualityScale[state.quality] || 1;
+      return clamp(Math.round(state.particleCount * scale), 20, 320);
+    }
+
+    function seedParticles() {
+      const count = targetCount();
+      particles = Array.from({ length: count }).map(() =>
+        createParticle(Math.random() * viewport.w, Math.random() * viewport.h)
+      );
+    }
+
+    function syncParticleCount() {
+      const needed = targetCount();
+      if (particles.length === needed) return;
+      if (particles.length > needed) {
+        particles.length = needed;
+        return;
+      }
+      while (particles.length < needed) {
+        particles.push(createParticle(Math.random() * viewport.w, Math.random() * viewport.h));
+      }
+    }
+
+    function draw() {
+      if (state.trail && !state.reducedMotion) {
+        const fade = clamp(parseNumber(state.trailFade, 0.5), 0.05, 0.9);
+        ctx.fillStyle = `rgba(1, 2, 4, ${fade})`;
+        ctx.fillRect(0, 0, viewport.w, viewport.h);
+      } else {
+        ctx.clearRect(0, 0, viewport.w, viewport.h);
+      }
+
+      if (!state.reducedMotion) {
+        for (let i = 0; i < particles.length; i += 1) {
+          applyForces(particles[i]);
+        }
+      }
+
+      for (let i = 0; i < particles.length; i += 1) {
+        const p = particles[i];
+        if (!state.reducedMotion) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.996;
+          p.vy *= 0.996;
+          enforceSpeedLimits(p);
+        }
+
+        if (p.x < 0) p.x += viewport.w;
+        if (p.x > viewport.w) p.x -= viewport.w;
+        if (p.y < 0) p.y += viewport.h;
+        if (p.y > viewport.h) p.y -= viewport.h;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = state.accentColor;
+        ctx.globalAlpha = state.reducedMotion ? 0.45 : 0.75;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      badge.textContent = state.label;
+      badge.style.borderColor = state.accentColor + "66";
+      badge.style.boxShadow = "0 0 20px " + state.accentColor + "22";
+
+      if (!state.reducedMotion) {
+        time += 0.016;
+        requestAnimationFrame(draw);
+      }
+    }
+
+    window.addEventListener("pointermove", (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      pointer.active = true;
+    });
+
+    window.addEventListener("pointerleave", () => {
+      pointer.active = false;
+    });
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.type === "VIEWPORT") {
+        setViewport(Number(data.w), Number(data.h), Number(data.dpr));
+        if (state.reducedMotion) draw();
+      }
+      if (data.type === "POINTER") {
+        if (typeof data.active !== "undefined") {
+          pointer.active = Boolean(data.active);
+        }
+        if (typeof data.x === "number") {
+          pointer.x = data.x;
+        }
+        if (typeof data.y === "number") {
+          pointer.y = data.y;
+        }
+        if (state.reducedMotion) draw();
+      }
+      if (data.type === "CONFIG") {
+        if (typeof data.particleCount !== "undefined") {
+          state.particleCount = clamp(parseNumber(data.particleCount, state.particleCount), 20, 220);
+        }
+        if (typeof data.maxSpeed !== "undefined") {
+          state.maxSpeed = clamp(parseNumber(data.maxSpeed, state.maxSpeed), 0.2, 6);
+        }
+        if (typeof data.minSpeed !== "undefined") {
+          state.minSpeed = clamp(parseNumber(data.minSpeed, state.minSpeed), 0, 3);
+        }
+        if (typeof data.trail !== "undefined") {
+          state.trail = parseBoolean(data.trail, state.trail);
+        }
+        if (typeof data.trailFade !== "undefined") {
+          state.trailFade = clamp(parseNumber(data.trailFade, state.trailFade), 0.05, 0.9);
+        }
+        if (typeof data.accentColor === "string" && data.accentColor.trim()) {
+          state.accentColor = data.accentColor;
+        }
+        if (typeof data.label === "string") {
+          state.label = data.label;
+        }
+        syncParticleCount();
+        if (state.reducedMotion) draw();
+      }
+    });
+
+    applyParams(window.location.search);
+    setViewport(viewport.w, viewport.h, viewport.dpr);
+    seedParticles();
+    draw();
+  </script>
+</body>
+</html>

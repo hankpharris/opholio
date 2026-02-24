@@ -201,6 +201,20 @@ The script will push `OPENAI_API_KEY` along with other env vars. When prompted f
 
 The chatbot will appear in the navigation. If `OPENAI_API_KEY` is missing, the chat API returns 503 and the chatbot will not function.
 
+### Background packs (samples + authoring docs)
+
+Sample packs and authoring documentation are available in:
+
+- [`background-packs/`](background-packs/)
+- [`background-packs/README.md`](background-packs/README.md)
+
+The folder currently includes two sample packs:
+
+- [`background-packs/nebula-grid`](background-packs/nebula-grid)
+- [`background-packs/orbit-trails`](background-packs/orbit-trails)
+
+Each sample is upload-ready once zipped from inside its folder.
+
 ## Live-configurable vs code-only
 
 Live-configurable (DB-backed, no redeploy):

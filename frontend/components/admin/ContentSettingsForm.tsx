@@ -90,7 +90,7 @@ export function ContentSettingsForm() {
     return (
         <div className="space-y-6">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Site title</label>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
                 <input
                     type="text"
                     value={settings.siteTitle}

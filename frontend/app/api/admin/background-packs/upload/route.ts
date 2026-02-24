@@ -8,6 +8,8 @@ import {
     normalizeZipPath,
     validateManifest,
     rewriteEntryHtml,
+    isIgnoredArchiveArtifact,
+    normalizePackFiles,
 } from "@/lib/background-pack-utils";
 import { createBackgroundPack } from "@/lib/background-packs";
 
@@ -26,7 +28,8 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const files = await unzipPack(buffer);
+    const allFiles = await unzipPack(buffer);
+    const files = allFiles.filter((entry) => !isIgnoredArchiveArtifact(entry.path));
     if (files.length === 0) {
         return new NextResponse("Zip is empty", { status: 400 });
     }
@@ -39,7 +42,13 @@ export async function POST(request: Request) {
         );
     }
 
-    const manifestFile = files.find((entry) => entry.path === "manifest.json");
+    const normalizedLayout = normalizePackFiles(files);
+    if (normalizedLayout.error) {
+        return NextResponse.json({ error: normalizedLayout.error }, { status: 400 });
+    }
+
+    const packFiles = normalizedLayout.files;
+    const manifestFile = packFiles.find((entry) => entry.path === "manifest.json");
     if (!manifestFile) {
         return new NextResponse("Missing manifest.json", { status: 400 });
     }
@@ -68,7 +77,7 @@ export async function POST(request: Request) {
             { status: 400 }
         );
     }
-    const entryFile = files.find((entry) => entry.path === entryPath);
+    const entryFile = packFiles.find((entry) => entry.path === entryPath);
     if (!entryFile) {
         return NextResponse.json(
             { error: "Entry file missing.", entry: entryPath },
@@ -82,7 +91,7 @@ export async function POST(request: Request) {
     const pathMap: Record<string, string> = {};
     const uploadedBlobUrls: string[] = [];
 
-    for (const entry of files) {
+    for (const entry of packFiles) {
         if (entry.path === entryPath || entry.path === "manifest.json") {
             continue;
         }
@@ -125,7 +134,7 @@ export async function POST(request: Request) {
     );
     uploadedBlobUrls.push(manifestBlob.url);
 
-    const previewEntry = files.find((entry) => entry.path === "preview.png");
+    const previewEntry = packFiles.find((entry) => entry.path === "preview.png");
     const previewUrl = previewEntry ? pathMap[previewEntry.path] ?? null : null;
 
     try {

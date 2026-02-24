@@ -150,9 +150,9 @@ export function BackgroundPacksManager() {
 
     return (
         <div className="space-y-6">
-            <div className="rounded-lg border border-dashed border-gray-300 bg-white dark:bg-gray-800 p-6">
+            <div className="rounded-xl border border-dashed border-white/40 bg-white/25 backdrop-blur-md p-6">
                 <h3 className="text-lg font-semibold mb-2">Upload background pack</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-sm text-gray-600 mb-4">
                     Upload a zip containing manifest.json and index.html.
                 </p>
                 <input
@@ -165,12 +165,12 @@ export function BackgroundPacksManager() {
                     }}
                     className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-md file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white hover:file:bg-blue-700"
                 />
-                {status && <p className="mt-3 text-sm text-gray-700 dark:text-gray-200">{status}</p>}
+                {status && <p className="mt-3 text-sm text-gray-700">{status}</p>}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
                 {packs.map((pack) => (
-                    <div key={pack.id} className="rounded-lg bg-white dark:bg-gray-800 p-4 shadow">
+                    <div key={pack.id} className="rounded-xl bg-white/25 backdrop-blur-md border border-white/20 p-4 shadow">
                         {pack.previewUrl && (
                             <img
                                 src={pack.previewUrl}
@@ -180,10 +180,10 @@ export function BackgroundPacksManager() {
                         )}
                         <div className="flex items-center justify-between">
                             <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white">
+                                <h4 className="font-semibold text-gray-900">
                                     {pack.name} <span className="text-sm text-gray-500">v{pack.version}</span>
                                 </h4>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                <p className="text-xs text-gray-500">
                                     {pack.allowExternal ? "External allowed" : "External blocked"}
                                     {" · "}
                                     {pack.interactive ? "Interactive" : "Non-interactive"}
@@ -221,14 +221,14 @@ export function BackgroundPacksManager() {
                     </div>
                 ))}
                 {packs.length === 0 && (
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="text-sm text-gray-500">
                         No packs uploaded yet.
                     </div>
                 )}
             </div>
 
             {activePack && controls.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-4">
+                <div className="bg-white/25 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow space-y-4">
                     <div>
                         <h3 className="text-lg font-semibold">Background controls</h3>
                         <p className="text-sm text-gray-500">Adjust the active background pack settings.</p>

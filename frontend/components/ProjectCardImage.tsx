@@ -7,7 +7,7 @@ interface ProjectCardImageProps {
 
 export function ProjectCardImage({ src, alt }: ProjectCardImageProps) {
     return (
-        <div className="relative w-full h-64 overflow-hidden">
+        <div className="relative w-full h-60 overflow-hidden rounded-md">
             <Image
                 src={src}
                 alt={alt}

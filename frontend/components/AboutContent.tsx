@@ -17,9 +17,9 @@ export function AboutContent({
         .filter(Boolean);
 
     return (
-        <div className="container max-w-3xl mx-auto px-8 py-12 bg-white/90 rounded-2xl shadow-2xl backdrop-blur-md relative z-10">
+        <div className="container max-w-3xl mx-auto px-8 py-12 bg-white/30 rounded-xl shadow-2xl backdrop-blur-md border border-white/25 relative z-10">
             <h1 className="text-4xl font-bold mb-3 text-center text-black drop-shadow-lg">{title}</h1>
-            {tagline && <p className="text-center text-gray-600 mb-8">{tagline}</p>}
+            {tagline && <p className="text-center text-gray-800 mb-8">{tagline}</p>}
             <div className="flex justify-center mb-8">
                 <img
                     src={avatarImageUrl || "/Logo(Resized).png"}
@@ -37,4 +37,3 @@ export function AboutContent({
         </div>
     );
 }
-
