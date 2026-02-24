@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     publisher: "Opholio",
     icons: {
         icon: [
-            { url: "/Logo(Resized).png", sizes: "500x500", type: "image/png" },
+            { url: "/favicon.png", sizes: "640x640", type: "image/png" },
         ],
-        shortcut: "/Logo(Resized).png",
-        apple: "/Logo(Resized).png",
+        shortcut: "/favicon.png",
+        apple: "/favicon.png",
     },
     alternates: {
         canonical: "/",
