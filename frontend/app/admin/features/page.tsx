@@ -10,7 +10,7 @@ export default async function AdminFeaturesPage() {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white/30 backdrop-blur-md border border-white/20 p-6 rounded-xl shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Features</h2>
             <FeatureSettingsForm />
         </div>

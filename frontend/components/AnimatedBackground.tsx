@@ -74,7 +74,7 @@ export function AnimatedBackground() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed top-0 left-0 w-full h-full -z-10"
+            className="fixed top-0 left-0 w-full h-full z-0"
             style={{ background: 'linear-gradient(45deg, #1a1a1a, #2a2a2a)' }}
         />
     );

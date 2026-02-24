@@ -149,3 +149,73 @@ export function contentTypeForPath(filePath: string) {
     const ext = path.extname(filePath).toLowerCase();
     return FILE_CONTENT_TYPES[ext] ?? null;
 }
+
+export function isIgnoredArchiveArtifact(filePath: string) {
+    const normalized = normalizeZipPath(filePath);
+    if (!normalized) return true;
+    if (normalized === ".ds_store") return true;
+    if (normalized.endsWith("/.ds_store")) return true;
+    if (normalized === "thumbs.db") return true;
+    if (normalized.endsWith("/thumbs.db")) return true;
+    if (normalized.startsWith("__macosx/")) return true;
+    return false;
+}
+
+export function normalizePackFiles(files: UnzippedFile[]) {
+    if (files.some((entry) => entry.path === "manifest.json")) {
+        return { files, wrapperDirectory: null as string | null, error: null as string | null };
+    }
+
+    const rootSegments = new Set<string>();
+    for (const entry of files) {
+        if (!entry.path.includes("/")) {
+            return { files, wrapperDirectory: null as string | null, error: null as string | null };
+        }
+        const segment = entry.path.split("/")[0];
+        if (!segment) {
+            return {
+                files,
+                wrapperDirectory: null as string | null,
+                error: "Zip contains invalid file paths.",
+            };
+        }
+        rootSegments.add(segment);
+    }
+
+    if (rootSegments.size !== 1) {
+        return { files, wrapperDirectory: null as string | null, error: null as string | null };
+    }
+
+    const wrapperDirectory = Array.from(rootSegments)[0];
+    const prefix = `${wrapperDirectory}/`;
+    const manifestPath = `${prefix}manifest.json`;
+    if (!files.some((entry) => entry.path === manifestPath)) {
+        return { files, wrapperDirectory: null as string | null, error: null as string | null };
+    }
+
+    const normalizedFiles = files.map((entry) => ({
+        ...entry,
+        path: entry.path.slice(prefix.length),
+    }));
+
+    const seen = new Set<string>();
+    for (const entry of normalizedFiles) {
+        if (!entry.path) {
+            return {
+                files,
+                wrapperDirectory: null as string | null,
+                error: "Zip contains an invalid wrapped file path.",
+            };
+        }
+        if (seen.has(entry.path)) {
+            return {
+                files,
+                wrapperDirectory: null as string | null,
+                error: `Zip contains duplicate files after wrapper normalization: "${entry.path}".`,
+            };
+        }
+        seen.add(entry.path);
+    }
+
+    return { files: normalizedFiles, wrapperDirectory, error: null as string | null };
+}

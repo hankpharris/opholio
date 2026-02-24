@@ -83,23 +83,26 @@ export default async function RootLayout({
             <body className={inter.className}>
                 <BackgroundLayer
                     enabled={settings.enableBackground}
+                    packId={activePack?.id ?? null}
                     entryUrl={activePack?.entryUrl ?? null}
                     interactive={activePack?.interactive ?? false}
                     config={settings.backgroundConfig as Record<string, unknown>}
                     quality={settings.backgroundQuality}
                     reducedMotionOverride={settings.reducedMotionOverride}
                 />
-                <Header
-                    siteTitle={settings.siteTitle}
-                    logoUrl={settings.logoImageUrl ?? undefined}
-                    showChatbot={settings.enableChatbot}
-                    showContactForm={settings.enableContactForm}
-                    showGithubButton={shouldShowGithubButton}
-                    githubProfileUrl={githubProfileUrl}
-                />
-                <main className="pt-[88px]">
-                    {children}
-                </main>
+                <div className="relative z-10">
+                    <Header
+                        siteTitle={settings.siteTitle}
+                        logoUrl={settings.logoImageUrl ?? undefined}
+                        showChatbot={settings.enableChatbot}
+                        showContactForm={settings.enableContactForm}
+                        showGithubButton={shouldShowGithubButton}
+                        githubProfileUrl={githubProfileUrl}
+                    />
+                    <main className="pt-[88px]">
+                        {children}
+                    </main>
+                </div>
             </body>
         </html>
     );

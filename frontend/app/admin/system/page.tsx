@@ -38,9 +38,9 @@ export default async function AdminSystemPage() {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white/30 backdrop-blur-md border border-white/20 p-6 rounded-xl shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">System status</h2>
-                <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <div className="space-y-2 text-sm text-gray-700">
                     <div>
                         <span className="font-medium">Database:</span>{" "}
                         <span className={dbStatus === "reachable" ? "text-green-600" : "text-red-600"}>
@@ -56,7 +56,7 @@ export default async function AdminSystemPage() {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white/30 backdrop-blur-md border border-white/20 p-6 rounded-xl shadow-lg">
                 <h3 className="text-lg font-semibold mb-3">Environment variables</h3>
                 <div className="grid gap-2 md:grid-cols-2 text-sm">
                     {envStatus.map((env) => (

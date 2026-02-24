@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 export default async function AboutMe() {
     const settings = await getSiteSettings();
     return (
-        <div className="min-h-screen w-full flex flex-col relative">
-            <div className="flex-grow flex items-center justify-center py-8">
+        <div className="h-[calc(100vh-88px)] w-full flex flex-col relative overflow-hidden">
+            <div className="flex-grow flex items-start justify-center pt-6 md:pt-10">
                 <AboutContent
                     title={settings.siteTitle}
                     tagline={settings.tagline}

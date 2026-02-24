@@ -27,7 +27,9 @@ export default async function ProjectsPage() {
                 <main className="min-h-screen">
                     <div className="container mx-auto px-4 py-8">
                         <div className="text-center">
-                            <h1 className="text-2xl font-semibold text-gray-900">No Projects Found</h1>
+                            <div className="inline-block rounded-xl bg-white/30 backdrop-blur-md shadow-lg px-5 py-3 mb-4">
+                                <h1 className="text-2xl font-semibold text-gray-900">No Projects Found</h1>
+                            </div>
                             <p className="mt-2 text-gray-600">There are no projects to display at the moment.</p>
                         </div>
                     </div>
@@ -38,7 +40,9 @@ export default async function ProjectsPage() {
         return (
             <main className="min-h-screen">
                 <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-3xl font-bold mb-4">Projects</h1>
+                    <div className="inline-block rounded-xl bg-white/30 backdrop-blur-md shadow-lg px-5 py-3 mb-6">
+                        <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {projects.map((project) => (
                             <ProjectCard

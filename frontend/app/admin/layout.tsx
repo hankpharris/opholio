@@ -22,12 +22,12 @@ export default function AdminLayout({
 
     return (
         <SessionProvider>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-                <div className="border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-900/90 backdrop-blur">
+            <div className="min-h-screen">
+                <div className="border-b border-white/30 bg-white/30 backdrop-blur-md rounded-b-xl">
                     <div className="container mx-auto px-4 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Admin</h1>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <h1 className="text-2xl font-semibold text-gray-900">Admin</h1>
+                            <p className="text-sm text-gray-600">
                                 Manage projects, backgrounds, and site settings
                             </p>
                         </div>
@@ -44,7 +44,7 @@ export default function AdminLayout({
                                         className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                                             isActive
                                                 ? "bg-blue-600 text-white"
-                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                : "bg-white/35 border border-white/20 text-gray-800 hover:bg-white/45"
                                         }`}
                                     >
                                         {tab.label}

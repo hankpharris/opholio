@@ -33,7 +33,9 @@ export function ProjectCard({
     return (
         <div className="bg-white/30 backdrop-blur-md rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-[550px]">
             <Link href={`/projects/${id}`} className="block flex-grow">
-                <ProjectCardImage src={overviewImage1} alt={`${title} overview`} />
+                <div className="pt-4">
+                    <ProjectCardImage src={overviewImage1} alt={`${title} overview`} />
+                </div>
                 <div className="p-6 pb-2">
                     <h3 className="text-xl font-bold text-gray-800">{title}</h3>
                     <div className="mt-2">

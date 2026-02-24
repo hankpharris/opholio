@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nebula Grid</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #080914;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <script>
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d");
+
+    const paletteMap = {
+      sunset: ["#ff6f61", "#ffb347", "#6c5ce7"],
+      teal: ["#3ddad7", "#1f6f8b", "#7cf7ff"],
+      mono: ["#9ca3af", "#d1d5db", "#6b7280"]
+    };
+
+    const qualityScale = { low: 0.75, med: 1, high: 1.4 };
+
+    const state = {
+      quality: "med",
+      reducedMotion: false,
+      waveSpeed: 0.7,
+      glowStrength: 0.8,
+      palette: "sunset",
+      showGrid: true
+    };
+
+    let viewport = {
+      w: window.innerWidth,
+      h: window.innerHeight,
+      dpr: window.devicePixelRatio || 1
+    };
+    let t = 0;
+
+    function parseNumber(value, fallback) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function parseBoolean(value, fallback) {
+      if (value === "true" || value === true) return true;
+      if (value === "false" || value === false) return false;
+      return fallback;
+    }
+
+    function applyParams(search) {
+      const params = new URLSearchParams(search);
+      state.quality = params.get("quality") || state.quality;
+      state.reducedMotion = parseBoolean(params.get("reducedMotion"), state.reducedMotion);
+      state.waveSpeed = parseNumber(params.get("waveSpeed"), state.waveSpeed);
+      state.glowStrength = parseNumber(params.get("glowStrength"), state.glowStrength);
+      state.palette = params.get("palette") || state.palette;
+      state.showGrid = parseBoolean(params.get("showGrid"), state.showGrid);
+    }
+
+    function setViewport(w, h, dpr) {
+      viewport.w = w || viewport.w;
+      viewport.h = h || viewport.h;
+      viewport.dpr = dpr || viewport.dpr || 1;
+      canvas.width = Math.floor(viewport.w * viewport.dpr);
+      canvas.height = Math.floor(viewport.h * viewport.dpr);
+      canvas.style.width = viewport.w + "px";
+      canvas.style.height = viewport.h + "px";
+      ctx.setTransform(viewport.dpr, 0, 0, viewport.dpr, 0, 0);
+    }
+
+    function drawWave(yOffset, amp, freq, color, alpha) {
+      ctx.beginPath();
+      ctx.moveTo(0, yOffset);
+      for (let x = 0; x <= viewport.w; x += 6) {
+        const y = yOffset + Math.sin(x * freq + t) * amp;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function drawGrid(step, alpha) {
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = "#dbeafe";
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= viewport.w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, viewport.h);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= viewport.h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(viewport.w, y);
+        ctx.stroke();
+      }
+    }
+
+    function frame() {
+      const colors = paletteMap[state.palette] || paletteMap.sunset;
+      const scale = qualityScale[state.quality] || 1;
+      const centerX = viewport.w * 0.5;
+      const centerY = viewport.h * 0.5;
+      const radius = Math.max(viewport.w, viewport.h) * (0.5 + state.glowStrength * 0.2);
+
+      const bg = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, radius);
+      bg.addColorStop(0, colors[0] + "55");
+      bg.addColorStop(0.45, colors[1] + "22");
+      bg.addColorStop(1, "#080914");
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, viewport.w, viewport.h);
+
+      const layers = Math.max(2, Math.round(4 * scale));
+      for (let i = 0; i < layers; i += 1) {
+        const offset = (viewport.h / (layers + 1)) * (i + 1);
+        const amp = (8 + i * 5) * scale;
+        const freq = 0.006 + i * 0.0012;
+        const color = colors[i % colors.length];
+        const alpha = 0.15 + i * 0.08;
+        drawWave(offset, amp, freq, color, alpha);
+      }
+
+      if (state.showGrid) {
+        const step = Math.max(18, Math.round(36 / scale));
+        drawGrid(step, 0.07 * state.glowStrength);
+      }
+
+      if (!state.reducedMotion) {
+        t += 0.02 * state.waveSpeed;
+        requestAnimationFrame(frame);
+      }
+    }
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.type === "VIEWPORT") {
+        setViewport(Number(data.w), Number(data.h), Number(data.dpr));
+        if (state.reducedMotion) frame();
+      }
+      if (data.type === "CONFIG") {
+        if (typeof data.waveSpeed !== "undefined") {
+          state.waveSpeed = parseNumber(data.waveSpeed, state.waveSpeed);
+        }
+        if (typeof data.glowStrength !== "undefined") {
+          state.glowStrength = parseNumber(data.glowStrength, state.glowStrength);
+        }
+        if (typeof data.palette === "string") {
+          state.palette = data.palette;
+        }
+        if (typeof data.showGrid !== "undefined") {
+          state.showGrid = parseBoolean(data.showGrid, state.showGrid);
+        }
+        if (state.reducedMotion) frame();
+      }
+    });
+
+    applyParams(window.location.search);
+    setViewport(viewport.w, viewport.h, viewport.dpr);
+    frame();
+  </script>
+</body>
+</html>
