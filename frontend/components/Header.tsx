@@ -16,13 +16,13 @@ interface HeaderProps {
 
 export function Header({
     siteTitle = "Portfolio",
-    logoUrl = "/LogoNoBG.png",
+    logoUrl = "/opholio-mark.png",
     showChatbot = true,
     showContactForm = true,
     showGithubButton = true,
     githubProfileUrl,
 }: HeaderProps) {
-    const resolvedLogoUrl = logoUrl || "/LogoNoBG.png";
+    const resolvedLogoUrl = logoUrl || "/opholio-mark.png";
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/30 backdrop-blur-md shadow-lg">
             <nav className="container mx-auto px-4 py-4">

@@ -22,7 +22,7 @@ export function AboutContent({
             {tagline && <p className="text-center text-gray-800 mb-8">{tagline}</p>}
             <div className="flex justify-center mb-8">
                 <img
-                    src={avatarImageUrl || "/Logo(Resized).png"}
+                    src={avatarImageUrl || "/opholio-mark.png"}
                     alt="Avatar"
                     className="w-64 h-64 rounded-full object-cover"
                 />
