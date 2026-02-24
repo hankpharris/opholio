@@ -6,6 +6,7 @@ interface SiteSettings {
     siteTitle: string;
     tagline: string;
     aboutContent: string;
+    avatarShape: "circle" | "square";
     avatarImageUrl: string | null;
     logoImageUrl: string | null;
 }
@@ -119,6 +120,20 @@ export function ContentSettingsForm() {
                 />
             </div>
 
+            <div>
+                <label className="block text-sm font-medium text-gray-700">About image shape</label>
+                <select
+                    value={settings.avatarShape}
+                    onChange={(event) =>
+                        updateField("avatarShape", event.target.value as SiteSettings["avatarShape"])
+                    }
+                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                >
+                    <option value="circle">Circle</option>
+                    <option value="square">Square (small radius)</option>
+                </select>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
                 {[
                     { field: "avatarImageUrl", label: "Avatar image" },
@@ -130,7 +145,13 @@ export function ContentSettingsForm() {
                             <img
                                 src={settings[item.field as keyof SiteSettings] as string}
                                 alt={item.label}
-                                className="w-32 h-32 object-cover rounded-full mb-2"
+                                className={`w-32 h-32 object-cover mb-2 ${
+                                    item.field === "avatarImageUrl"
+                                        ? settings.avatarShape === "square"
+                                            ? "rounded-lg"
+                                            : "rounded-full"
+                                        : "rounded-full"
+                                }`}
                             />
                         )}
                         <input
