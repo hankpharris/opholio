@@ -1,0 +1,25 @@
+Opholio
+Copyright (C) 2026 Henry Pharris
+
+Attribution Content (must be preserved):
+1. Attribution Notice (exact text):
+   Opholio was originally created by Henry Pharris.
+2. Other author-credit text:
+   Any other text in this project that explicitly credits Henry Pharris as the original
+   creator/author/developer of Opholio (or substantially similar wording). This includes
+   attribution appearing in documentation, source code comments/strings, and user-visible UI
+   text (for example: chatbot messages, footers, About dialogs, or “powered by” sections).
+
+Additional Terms (GNU AGPLv3, Section 7(b)):
+1. Preserve this NOTICE file.
+   If you convey copies of this software (modified or unmodified), you must preserve this
+   NOTICE file, including the Attribution Content above.
+2. Do not remove obscure, or otherwise impede the display of Attribution Content.
+   If you convey copies of this software (modified or unmodified), you must not remove,
+   obscure, or alter Attribution Content in the conveyed work.
+3. Moving attribution when removing features.
+   If you remove a feature/component that contained Attribution Content, you may remove that
+   specific occurrence only if you keep the Attribution Notice (exact text) present somewhere
+   else in the conveyed work, and (when the conveyed work has a user-visible UI) ensure it
+   remains reasonably visible to end users.
+

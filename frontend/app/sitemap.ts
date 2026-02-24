@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next'
 import { getProjects } from '@/lib/db'
+import { getBaseUrl } from '@/lib/seo'
 
 // Generate sitemap at request time to access database
 export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://henry-pharris.it.com'
+  const baseUrl = getBaseUrl()
   
   // Get all projects for dynamic routes
   const projects = await getProjects()
