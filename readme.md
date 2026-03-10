@@ -127,9 +127,6 @@ npm run -w database migrate:dev
 
 After storage + env vars + migrations are in place, redeploy from Vercel and visit your admin page by apedning your base url with /admin. From here you can login and create your site content!
 
-## What to do next (based on your current repo-root `.env.local`)
-
-
 ## Local development (after env is set)
 
 ```bash
