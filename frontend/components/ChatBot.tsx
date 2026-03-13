@@ -113,18 +113,6 @@ export function ChatBot() {
     return () => window.removeEventListener('resize', updatePosition);
   }, []);
 
-  // Handle navigation with confirmation
-  const handleNavigation = useCallback((path: string) => {
-    if (messages.length > 1) {
-      // Reset countdown before showing dialog
-      setCountdown(10);
-      setPendingNavigation(path);
-      setShowNavigationConfirm(true);
-    } else {
-      router.push(path);
-    }
-  }, [messages.length, router]);
-
   // Handle speech recognition commands
   useEffect(() => {
     if (!listening) return;
@@ -333,7 +321,7 @@ export function ChatBot() {
   };
 
   const renderWithLinks = (content: string) => {
-    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+)([),.!?;:]?)/g;
+    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s),.!?;:]+)([),.!?;:]?)/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;

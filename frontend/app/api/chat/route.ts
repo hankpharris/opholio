@@ -339,30 +339,15 @@ export async function POST(req: Request) {
       finalAssistantText = 'I can help with that. Please share a bit more detail.';
     }
 
-    const encoder = new TextEncoder();
-    const stream = new TransformStream();
-    const writer = stream.writable.getWriter();
-
-    void (async () => {
-      try {
-        await writer.write(encoder.encode(finalAssistantText));
-      } catch (streamError) {
-        console.error('Streaming error:', streamError);
-      } finally {
-        await writer.close();
-      }
-    })();
-
     const headers = new Headers({
       'Content-Type': 'text/plain',
-      'Transfer-Encoding': 'chunked',
     });
 
     if (navigationTarget) {
       headers.set('x-ophelia-navigation', navigationTarget);
     }
 
-    return new Response(stream.readable, { headers });
+    return new Response(finalAssistantText, { headers });
   } catch (error) {
     console.error('Chat Error:', error);
     return new Response('Error processing chat', { status: 500 });
