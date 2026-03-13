@@ -56,17 +56,74 @@ function readLinkedProject() {
 function getAuthFileCandidates() {
   const home = os.homedir();
   const appData = process.env.APPDATA;
+  const localAppData = process.env.LOCALAPPDATA;
+  const xdgConfigHome = process.env.XDG_CONFIG_HOME;
   const globalConfig = process.env.VERCEL_GLOBAL_CONFIG;
+  const macAppSupport = path.join(home, 'Library', 'Application Support');
 
   const candidates = [
-    globalConfig ? path.join(globalConfig, 'auth.json') : '',
+    globalConfig && globalConfig.endsWith('.json') ? globalConfig : '',
+    globalConfig && !globalConfig.endsWith('.json') ? path.join(globalConfig, 'auth.json') : '',
+    path.join(macAppSupport, 'com.vercel.cli', 'auth.json'),
+    path.join(macAppSupport, 'com.vercel.cli', 'Data', 'auth.json'),
     appData ? path.join(appData, 'com.vercel.cli', 'Data', 'auth.json') : '',
+    appData ? path.join(appData, 'com.vercel.cli', 'auth.json') : '',
+    localAppData ? path.join(localAppData, 'com.vercel.cli', 'Data', 'auth.json') : '',
+    localAppData ? path.join(localAppData, 'com.vercel.cli', 'auth.json') : '',
+    xdgConfigHome ? path.join(xdgConfigHome, 'com.vercel.cli', 'auth.json') : '',
+    path.join(home, '.config', 'com.vercel.cli', 'auth.json'),
     path.join(home, '.vercel', 'auth.json'),
     path.join(home, '.now', 'auth.json'),
     appData ? path.join(appData, 'now', 'Data', 'auth.json') : '',
+    path.join(home, '.config', 'configstore', 'vercel.json'),
+    path.join(home, '.config', 'configstore', 'now.json'),
   ].filter(Boolean);
 
   return [...new Set(candidates)];
+}
+
+function extractTokenValue(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return value.trim();
+  if (typeof value !== 'object') return '';
+
+  const nestedCandidates = [
+    value.token,
+    value.value,
+    value.secret,
+    value.accessToken,
+    value.access_token,
+  ];
+
+  for (const candidate of nestedCandidates) {
+    const token = extractTokenValue(candidate);
+    if (token) return token;
+  }
+
+  return '';
+}
+
+function extractTokenFromAuth(payload) {
+  if (!payload || typeof payload !== 'object') return '';
+
+  const directCandidates = [
+    payload.token,
+    payload.authToken,
+    payload.accessToken,
+    payload.access_token,
+    payload.vercelToken,
+    payload.credentials?.token,
+    payload.credentials?.accessToken,
+    payload.user?.token,
+    payload.user?.accessToken,
+  ];
+
+  for (const candidate of directCandidates) {
+    const token = extractTokenValue(candidate);
+    if (token) return token;
+  }
+
+  return '';
 }
 
 function getVercelToken() {
@@ -77,7 +134,7 @@ function getVercelToken() {
     if (!fs.existsSync(authFile)) continue;
     try {
       const parsed = JSON.parse(fs.readFileSync(authFile, 'utf8'));
-      const token = typeof parsed?.token === 'string' ? parsed.token.trim() : '';
+      const token = extractTokenFromAuth(parsed);
       if (token) return token;
     } catch (_) {
       // Ignore malformed files and continue trying other known locations.
@@ -257,6 +314,10 @@ async function main() {
   if (!token) {
     console.error('Could not find a Vercel auth token.');
     console.error('Run `npx vercel login` (or set VERCEL_TOKEN) and rerun this script.');
+    console.error('Searched auth files:');
+    for (const file of getAuthFileCandidates()) {
+      console.error(`- ${file}${fs.existsSync(file) ? ' (found)' : ''}`);
+    }
     process.exit(1);
   }
 
