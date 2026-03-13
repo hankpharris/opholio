@@ -1,7 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { ChatOpenAI } from '@langchain/openai';
-import { AIMessage, HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
-import { tool } from '@langchain/core/tools';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 import { getSiteSettings } from '@/lib/site-settings';
 
@@ -147,6 +146,37 @@ function asConversationMessages(messages: Array<{ role: string; content: string 
     .map((message) => (message.role === 'user' ? new HumanMessage(message.content) : new AIMessage(message.content)));
 }
 
+const pageSchema = z.object({
+  page: z.enum(['about', 'projects', 'admin']),
+});
+
+const projectSchema = z.object({
+  projectId: z.number().int().positive(),
+});
+
+const toolDefinitions = [
+  {
+    name: 'navigate_to_page',
+    description: 'Route the user to a top-level page. Use this only when user explicitly asks to navigate.',
+    schema: pageSchema,
+  },
+  {
+    name: 'navigate_to_project',
+    description: 'Route the user to a specific project page by ID when explicitly asked to navigate.',
+    schema: projectSchema,
+  },
+  {
+    name: 'get_project',
+    description: 'Fetch full details for one project by ID.',
+    schema: projectSchema,
+  },
+  {
+    name: 'list_projects',
+    description: 'List all active projects with full fields.',
+    schema: z.object({}),
+  },
+] as const;
+
 export async function POST(req: Request) {
   try {
     const settings = await getSiteSettings();
@@ -163,120 +193,19 @@ export async function POST(req: Request) {
 
     const activeProjects = await getAllActiveProjects();
 
-    let navigationTarget: string | null = null;
-
-    const navigateToPageTool = tool(
-      async ({ page }: { page: 'about' | 'projects' | 'admin' }) => {
-        const path = `/${page}`;
-        navigationTarget = path;
-        return {
-          success: true,
-          path,
-          message: `Navigation prepared to ${path}.`,
-        };
-      },
-      {
-        name: 'navigate_to_page',
-        description: 'Route the user to a top-level page. Use this only when user explicitly asks to navigate.',
-        schema: z.object({
-          page: z.enum(['about', 'projects', 'admin']),
-        }),
-      },
-    );
-
-    const navigateToProjectTool = tool(
-      async ({ projectId }: { projectId: number }) => {
-        const project = await getProjectByIdAnyStatus(projectId);
-        if (!project) {
-          return {
-            success: false,
-            denied: true,
-            reason: `Project ${projectId} does not exist.`,
-          };
-        }
-
-        if (!project.isActive) {
-          return {
-            success: false,
-            denied: true,
-            reason: `Project ${projectId} exists but is inactive and cannot be accessed right now.`,
-          };
-        }
-
-        const path = `/projects/${projectId}`;
-        navigationTarget = path;
-        return {
-          success: true,
-          path,
-          project,
-          message: `Navigation prepared to ${path}.`,
-        };
-      },
-      {
-        name: 'navigate_to_project',
-        description: 'Route the user to a specific project page by ID when explicitly asked to navigate.',
-        schema: z.object({
-          projectId: z.number().int().positive(),
-        }),
-      },
-    );
-
-    const getProjectTool = tool(
-      async ({ projectId }: { projectId: number }) => {
-        const project = await getProjectByIdAnyStatus(projectId);
-        if (!project) {
-          return {
-            found: false,
-            reason: `Project ${projectId} does not exist.`,
-          };
-        }
-
-        if (!project.isActive) {
-          return {
-            found: false,
-            reason: `Project ${projectId} exists but is inactive.`,
-          };
-        }
-
-        return {
-          found: true,
-          project,
-        };
-      },
-      {
-        name: 'get_project',
-        description: 'Fetch full details for one project by ID.',
-        schema: z.object({
-          projectId: z.number().int().positive(),
-        }),
-      },
-    );
-
-    const listProjectsTool = tool(
-      async () => {
-        const projects = await getAllActiveProjects();
-        return {
-          count: projects.length,
-          projects,
-        };
-      },
-      {
-        name: 'list_projects',
-        description: 'List all active projects with full fields.',
-        schema: z.object({}),
-      },
-    );
-
-    const tools = [navigateToPageTool, navigateToProjectTool, getProjectTool, listProjectsTool];
-    const toolMap = Object.fromEntries(tools.map((singleTool) => [singleTool.name, singleTool]));
+    const modelTools = toolDefinitions.map((definition) => ({
+      name: definition.name,
+      description: definition.description,
+      schema: definition.schema,
+    }));
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       model: 'gpt-4o-mini',
       temperature: 0.2,
-    }).bindTools(tools);
+    }).bindTools(modelTools);
 
-    const conversation = [
+    const conversation: BaseMessage[] = [
       new SystemMessage(
         getSystemMessage({
           siteTitle: settings.siteTitle?.trim() || '',
@@ -290,6 +219,8 @@ export async function POST(req: Request) {
 
     const maxSteps = 6;
     let finalAssistantText = '';
+    let lastToolTurnNavigationTarget: string | null = null;
+    let navigationTarget: string | null = null;
 
     for (let step = 0; step < maxSteps; step += 1) {
       const assistant = await model.invoke(conversation);
@@ -298,71 +229,199 @@ export async function POST(req: Request) {
       const toolCalls = assistant.tool_calls ?? [];
       if (!toolCalls.length) {
         finalAssistantText = toPromptText(assistant.content).trim();
+        navigationTarget = lastToolTurnNavigationTarget;
         break;
       }
 
+      let navigationThisTurn: string | null = null;
+
       for (const call of toolCalls) {
-        const selectedTool = toolMap[call.name];
-        if (!selectedTool) {
+        const callId = call.id ?? call.name;
+
+        if (call.name === 'navigate_to_page') {
+          const parsed = pageSchema.safeParse(call.args ?? {});
+          if (!parsed.success) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  success: false,
+                  denied: true,
+                  reason: 'Invalid page navigation arguments.',
+                }),
+              }),
+            );
+            continue;
+          }
+
+          const path = `/${parsed.data.page}`;
+          navigationThisTurn = path;
           conversation.push(
             new ToolMessage({
-              tool_call_id: call.id ?? call.name,
-              content: JSON.stringify({ error: `Unknown tool: ${call.name}` }),
+              tool_call_id: callId,
+              content: JSON.stringify({
+                success: true,
+                path,
+                message: `Navigation prepared to ${path}.`,
+              }),
             }),
           );
           continue;
         }
 
-        try {
-          const toolResult = await selectedTool.invoke(call.args ?? {});
+        if (call.name === 'navigate_to_project') {
+          const parsed = projectSchema.safeParse(call.args ?? {});
+          if (!parsed.success) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  success: false,
+                  denied: true,
+                  reason: 'Invalid project navigation arguments.',
+                }),
+              }),
+            );
+            continue;
+          }
+
+          const project = await getProjectByIdAnyStatus(parsed.data.projectId);
+          if (!project) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  success: false,
+                  denied: true,
+                  reason: `Project ${parsed.data.projectId} does not exist.`,
+                }),
+              }),
+            );
+            continue;
+          }
+
+          if (!project.isActive) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  success: false,
+                  denied: true,
+                  reason: `Project ${parsed.data.projectId} exists but is inactive and cannot be accessed right now.`,
+                }),
+              }),
+            );
+            continue;
+          }
+
+          const path = `/projects/${parsed.data.projectId}`;
+          navigationThisTurn = path;
           conversation.push(
             new ToolMessage({
-              tool_call_id: call.id ?? call.name,
-              content: JSON.stringify(toolResult),
-            }),
-          );
-        } catch (toolError) {
-          conversation.push(
-            new ToolMessage({
-              tool_call_id: call.id ?? call.name,
+              tool_call_id: callId,
               content: JSON.stringify({
-                error: `Tool execution failed for ${call.name}`,
-                details: toolError instanceof Error ? toolError.message : 'Unknown tool error',
+                success: true,
+                path,
+                project,
+                message: `Navigation prepared to ${path}.`,
               }),
             }),
           );
+          continue;
         }
+
+        if (call.name === 'get_project') {
+          const parsed = projectSchema.safeParse(call.args ?? {});
+          if (!parsed.success) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  found: false,
+                  reason: 'Invalid project lookup arguments.',
+                }),
+              }),
+            );
+            continue;
+          }
+
+          const project = await getProjectByIdAnyStatus(parsed.data.projectId);
+          if (!project) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  found: false,
+                  reason: `Project ${parsed.data.projectId} does not exist.`,
+                }),
+              }),
+            );
+            continue;
+          }
+
+          if (!project.isActive) {
+            conversation.push(
+              new ToolMessage({
+                tool_call_id: callId,
+                content: JSON.stringify({
+                  found: false,
+                  reason: `Project ${parsed.data.projectId} exists but is inactive.`,
+                }),
+              }),
+            );
+            continue;
+          }
+
+          conversation.push(
+            new ToolMessage({
+              tool_call_id: callId,
+              content: JSON.stringify({
+                found: true,
+                project,
+              }),
+            }),
+          );
+          continue;
+        }
+
+        if (call.name === 'list_projects') {
+          const projects = await getAllActiveProjects();
+          conversation.push(
+            new ToolMessage({
+              tool_call_id: callId,
+              content: JSON.stringify({
+                count: projects.length,
+                projects,
+              }),
+            }),
+          );
+          continue;
+        }
+
+        conversation.push(
+          new ToolMessage({
+            tool_call_id: callId,
+            content: JSON.stringify({ error: `Unknown tool: ${call.name}` }),
+          }),
+        );
       }
+
+      lastToolTurnNavigationTarget = navigationThisTurn;
     }
 
     if (!finalAssistantText) {
       finalAssistantText = 'I can help with that. Please share a bit more detail.';
     }
 
-    const encoder = new TextEncoder();
-    const stream = new TransformStream();
-    const writer = stream.writable.getWriter();
-
-    void (async () => {
-      try {
-        await writer.write(encoder.encode(finalAssistantText));
-      } catch (streamError) {
-        console.error('Streaming error:', streamError);
-      } finally {
-        await writer.close();
-      }
-    })();
-
     const headers = new Headers({
       'Content-Type': 'text/plain',
-      'Transfer-Encoding': 'chunked',
     });
 
     if (navigationTarget) {
       headers.set('x-ophelia-navigation', navigationTarget);
     }
 
-    return new Response(stream.readable, { headers });
+    return new Response(finalAssistantText, { headers });
   } catch (error) {
     console.error('Chat Error:', error);
     return new Response('Error processing chat', { status: 500 });

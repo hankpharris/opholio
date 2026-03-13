@@ -113,18 +113,6 @@ export function ChatBot() {
     return () => window.removeEventListener('resize', updatePosition);
   }, []);
 
-  // Handle navigation with confirmation
-  const handleNavigation = useCallback((path: string) => {
-    if (messages.length > 1) {
-      // Reset countdown before showing dialog
-      setCountdown(10);
-      setPendingNavigation(path);
-      setShowNavigationConfirm(true);
-    } else {
-      router.push(path);
-    }
-  }, [messages.length, router]);
-
   // Handle speech recognition commands
   useEffect(() => {
     if (!listening) return;
@@ -210,7 +198,7 @@ export function ChatBot() {
     if (!input.trim() || isLoading) return;
 
     // Add user message
-    const userMessage = { role: 'user', content: input };
+    const userMessage: Message = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -232,7 +220,7 @@ export function ChatBot() {
       }
       
       // Add assistant message with empty content
-      const assistantMessage = { role: 'assistant', content: '' };
+      const assistantMessage: Message = { role: 'assistant', content: '' };
       setMessages(prev => [...prev, assistantMessage]);
 
       // Handle streaming response
@@ -333,14 +321,29 @@ export function ChatBot() {
   };
 
   const renderWithLinks = (content: string) => {
-    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+)([),.!?;:]?)/g;
+    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|https?:\/\/[^\s<>"']+/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
 
     while ((match = linkRegex.exec(content)) !== null) {
-      const [fullMatch, markdownLabel, markdownUrl, plainUrl, punctuation] = match;
-      const url = markdownUrl || plainUrl;
+      const [fullMatch, markdownLabel, markdownUrl] = match;
+      const isMarkdownLink = Boolean(markdownUrl);
+      const rawUrl = markdownUrl || fullMatch;
+      let url = rawUrl;
+      let trailingPunctuation = '';
+
+      if (!isMarkdownLink) {
+        while (/[),.!?;:]$/.test(url)) {
+          trailingPunctuation = `${url.slice(-1)}${trailingPunctuation}`;
+          url = url.slice(0, -1);
+        }
+      }
+
+      if (!url) {
+        continue;
+      }
+
       const label = markdownLabel || 'link';
       const start = match.index;
       const end = start + fullMatch.length;
@@ -361,8 +364,8 @@ export function ChatBot() {
         </a>,
       );
 
-      if (punctuation) {
-        parts.push(punctuation);
+      if (trailingPunctuation) {
+        parts.push(trailingPunctuation);
       }
 
       lastIndex = end;
