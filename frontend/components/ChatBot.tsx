@@ -4,7 +4,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { MessageSquare, X, Send, Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
 import { Button } from './buttons/Button';
-import { useChat } from 'ai/react';
 import { useRouter } from 'next/navigation';
 import { useChatStore } from '../store/chatStore';
 import SpeechRecognitionLib, { useSpeechRecognition } from 'react-speech-recognition';
@@ -27,7 +26,7 @@ How can I help you today?`
 
 type Message = {
   id?: string;
-  role: string;
+  role: 'assistant' | 'user';
   content: string;
 };
 
@@ -225,6 +224,12 @@ export function ChatBot() {
       });
 
       if (!chatRes.ok) throw new Error('Chat request failed');
+
+      const navigationPath = chatRes.headers.get('x-ophelia-navigation');
+      if (navigationPath) {
+        setPendingNavigation(navigationPath);
+        setShowNavigationConfirm(true);
+      }
       
       // Add assistant message with empty content
       const assistantMessage = { role: 'assistant', content: '' };
@@ -316,15 +321,6 @@ export function ChatBot() {
         }
       }
 
-      // Check for navigation
-      const navigationMatch = fullContent.match(/^Navigating you to (?:project )?(\d+|\/\w+|\w+)/i);
-      if (navigationMatch) {
-        const path = extractNavigationPath(navigationMatch[0]);
-        if (path) {
-          setPendingNavigation(path);
-          setShowNavigationConfirm(true);
-        }
-      }
     } catch (error) {
       console.error('Error:', error);
       setMessages(prev => [...prev, {
@@ -336,26 +332,47 @@ export function ChatBot() {
     }
   };
 
-  const extractNavigationPath = (content: string): string | null => {
-    const navigationPatterns = [
-      { pattern: /^Navigating you to (\/\w+)/i, path: '$1' },
-      { pattern: /^Navigating you to (about)/i, path: '/about' },
-      { pattern: /^Navigating you to (projects)/i, path: '/projects' },
-      { pattern: /^Navigating you to (admin)/i, path: '/admin' },
-      // Project-specific navigation patterns
-      { pattern: /^Navigating you to project (\d+)/i, path: (match: RegExpMatchArray) => `/projects/${match[1]}` }
-    ];
+  const renderWithLinks = (content: string) => {
+    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+)([),.!?;:]?)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
 
-    for (const { pattern, path } of navigationPatterns) {
-      const match = content.match(pattern);
-      if (match) {
-        if (typeof path === 'function') {
-          return path(match);
-        }
-        return path.startsWith('/') ? path : `/${path}`;
+    while ((match = linkRegex.exec(content)) !== null) {
+      const [fullMatch, markdownLabel, markdownUrl, plainUrl, punctuation] = match;
+      const url = markdownUrl || plainUrl;
+      const label = markdownLabel || 'link';
+      const start = match.index;
+      const end = start + fullMatch.length;
+
+      if (start > lastIndex) {
+        parts.push(content.slice(lastIndex, start));
       }
+
+      parts.push(
+        <a
+          key={`${url}-${start}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-blue-300 hover:text-blue-200"
+        >
+          {label}
+        </a>,
+      );
+
+      if (punctuation) {
+        parts.push(punctuation);
+      }
+
+      lastIndex = end;
     }
-    return null;
+
+    if (lastIndex < content.length) {
+      parts.push(content.slice(lastIndex));
+    }
+
+    return <span className="whitespace-pre-wrap">{parts}</span>;
   };
 
   const handleConfirmNavigation = useCallback(() => {
@@ -410,7 +427,11 @@ export function ChatBot() {
         try {
           const textForTTS = message.content.replace(LINK_PLACEHOLDER, 'here');
           console.log('Sending TTS request for:', textForTTS);
-          const response = await fetch(`/api/chat?text=${encodeURIComponent(textForTTS)}`);
+          const response = await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: textForTTS }),
+          });
 
           if (!response.ok) {
             const errorText = await response.text();
@@ -543,7 +564,7 @@ export function ChatBot() {
                       );
                     })()
                   ) : (
-                    message.content
+                    renderWithLinks(message.content)
                   )}
                 </div>
               </div>
